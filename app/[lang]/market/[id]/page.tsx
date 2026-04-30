@@ -16,7 +16,7 @@ import {
   localizedPath,
   siteKeywords,
   siteName,
-} from '@/lib/seo'
+} from '@/lib/seo' 
 import { DICT } from '@/lib/i18n'
 
 export const revalidate = 60
