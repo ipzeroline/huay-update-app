@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Breadcrumbs from '@/app/breadcrumbs'
 import { MarketDetailPanel } from '@/app/market-detail-view'
 import LotterySeoContent, { faqJsonLd } from '@/app/lottery-seo-content'
-import { fetchMarketResults, todayBangkok, type MarketResult } from '@/lib/lottery-api'
+import { fetchMarketResults, isHiddenLotteryMarket, todayBangkok, type MarketResult } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import LangSwitcher from '@/app/lang-switcher'
 import {
@@ -59,6 +59,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const detail = await fetchMarketResults(id, lang)
     const market = detail.data?.market
     if (!market) throw new Error('Market not found')
+    if (isHiddenLotteryMarket(market)) {
+      return { title: 'Not found', robots: { index: false, follow: false } }
+    }
 
     const title = lang === 'en' ? `${market.name} latest results and history` : `ผล${market.name}ล่าสุดและย้อนหลัง`
     const description = lang === 'en'
@@ -95,6 +98,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
 
   const market = detail.data?.market
   if (!market) notFound()
+  if (isHiddenLotteryMarket(market)) notFound()
 
   const history = detail.data?.history ?? []
   const pagination = detail.data?.pagination

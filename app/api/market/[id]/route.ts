@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { fetchMarketResults } from '@/lib/lottery-api'
+import { fetchMarketResults, isHiddenLotteryMarket } from '@/lib/lottery-api'
 import { isLang } from '@/lib/i18n'
 
 export const dynamic = 'force-dynamic'
@@ -14,7 +14,12 @@ export async function GET(req: Request, ctx: RouteContext<'/api/market/[id]'>) {
   const limit = Math.max(1, Math.min(100, Number(searchParams.get('limit')) || 20))
 
   try {
-    return NextResponse.json(await fetchMarketResults(id, lang, { page, limit }), {
+    const detail = await fetchMarketResults(id, lang, { page, limit })
+    if (isHiddenLotteryMarket(detail.data?.market)) {
+      return NextResponse.json({ success: false, error: 'Market not found' }, { status: 404 })
+    }
+
+    return NextResponse.json(detail, {
       headers: { 'Cache-Control': 'no-store, max-age=0' },
     })
   } catch (err) {

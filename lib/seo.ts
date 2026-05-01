@@ -16,7 +16,6 @@ export const siteKeywords = [
   'สลากกินแบ่งรัฐบาล',
   'หวยลาว',
   'หวยฮานอย',
-  'หวยยี่กี',
 ]
 
 export const lotteryGroups = [

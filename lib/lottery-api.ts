@@ -57,6 +57,59 @@ export interface LotteryByDateResponse {
   error?: string
 }
 
+const HIDDEN_LOTTERY_GROUP_ID = 5
+const HIDDEN_LOTTERY_GROUP_NAME = 'หวยยี่กี'
+
+function normalizedGroupName(name: string | null | undefined): string {
+  return (name ?? '').replace(/\s+/g, '')
+}
+
+function resultCount(groups: Group[]): number {
+  return groups.reduce(
+    (sum, group) => sum + group.markets.filter(market => (
+      market.result?.result_number && !market.result.result_number.no_result
+    )).length,
+    0,
+  )
+}
+
+export function isHiddenLotteryGroup(group: Pick<Group, 'group_id' | 'group_name'>): boolean {
+  return (
+    group.group_id === HIDDEN_LOTTERY_GROUP_ID ||
+    normalizedGroupName(group.group_name) === normalizedGroupName(HIDDEN_LOTTERY_GROUP_NAME)
+  )
+}
+
+export function isHiddenLotteryMarket(
+  market: { group_id?: number | null; group_name?: string | null } | null | undefined,
+): boolean {
+  return (
+    market?.group_id === HIDDEN_LOTTERY_GROUP_ID ||
+    normalizedGroupName(market?.group_name) === normalizedGroupName(HIDDEN_LOTTERY_GROUP_NAME)
+  )
+}
+
+export function hideHiddenLotteryGroups(response: LotteryByDateResponse): LotteryByDateResponse {
+  if (!response.data) return response
+
+  const groups = response.data.groups.filter(group => !isHiddenLotteryGroup(group))
+  const summary = response.data.summary ? {
+    ...response.data.summary,
+    group_count: groups.length,
+    market_count: groups.reduce((sum, group) => sum + group.markets.length, 0),
+    result_count: resultCount(groups),
+  } : response.data.summary
+
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      groups,
+      summary,
+    },
+  }
+}
+
 export function todayBangkok(): string {
   const fmt = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit',
@@ -75,7 +128,8 @@ export async function fetchLotteryByDate(date: string, lang: string = 'th'): Pro
     cache: 'no-store',
   })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  return res.json()
+  const payload: LotteryByDateResponse = await res.json()
+  return hideHiddenLotteryGroups(payload)
 }
 
 export async function fetchMarketResults(
