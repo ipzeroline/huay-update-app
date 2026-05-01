@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import {
   RefreshCw, ChevronLeft, ChevronRight,
   TrendingUp, Globe, Flag, Clock, LayoutGrid,
-  Menu, X, Compass, Sparkles, FileText, Calculator,
+  Menu, X, Compass, Sparkles, FileText, Calculator, Search,
 } from 'lucide-react'
 import { DICT, LANGS, LANG_LABEL, LANG_FLAG, isLang, type Lang, type Dict } from '@/lib/i18n'
 
@@ -162,6 +162,9 @@ function fmtTime(s: string | null, lang: Lang) {
   const [, hour, minute] = match
   return lang === 'en' ? `${hour}:${minute}` : `${hour}:${minute}`
 }
+function normalizeSearchText(value: string) {
+  return value.trim().toLocaleLowerCase().replace(/\s+/g, '')
+}
 
 /* ──────────────────────────────────────────── */
 export default function LotteryApp({ initialData, initialDate, initialLang, groupCode, groupName, langPrefix = '', breadcrumbs }: {
@@ -215,6 +218,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
   const skipFirstFetchRef = useRef(!!initialData)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const d = new Date((initialDate ?? toLocalDateStr(new Date())) + 'T12:00:00')
     return toLocalDateStr(new Date(d.getFullYear(), d.getMonth(), 1, 12))
@@ -262,8 +266,23 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
     ? lotteryDatePath(date, langPrefix)
     : langPrefix || '/'
   const visibleGroups = groupCode ? groups.filter(group => group.group_code === groupCode) : groups
-  const totalMarkets = visibleGroups.reduce((s, g) => s + g.markets.length, 0)
-  const resultCount = visibleGroups.reduce(
+  const normalizedSearchQuery = normalizeSearchText(searchQuery)
+  const displayedGroups = useMemo(() => {
+    if (!normalizedSearchQuery) return visibleGroups
+
+    return visibleGroups
+      .map(group => {
+        const groupMatches = normalizeSearchText(group.group_name).includes(normalizedSearchQuery)
+        const markets = groupMatches
+          ? group.markets
+          : group.markets.filter(market => normalizeSearchText(market.market_name).includes(normalizedSearchQuery))
+
+        return { ...group, markets }
+      })
+      .filter(group => group.markets.length > 0)
+  }, [normalizedSearchQuery, visibleGroups])
+  const totalMarkets = displayedGroups.reduce((s, g) => s + g.markets.length, 0)
+  const resultCount = displayedGroups.reduce(
     (s, g) => s + g.markets.filter(m => m.result?.result_number && !m.result.result_number.no_result).length,
     0,
   )
@@ -501,6 +520,33 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
           )}
         </div>
 
+        {data?.success && visibleGroups.length > 0 && (
+          <div className="market-search-section">
+            <label className="market-search-field">
+              <Search size={16} />
+              <input
+                className="market-search-input"
+                type="search"
+                value={searchQuery}
+                onChange={event => setSearchQuery(event.target.value)}
+                placeholder={t.searchLotteryPlaceholder}
+                aria-label={t.searchLottery}
+                autoComplete="off"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="market-search-clear"
+                  onClick={() => setSearchQuery('')}
+                  aria-label={t.clearSearch}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </label>
+          </div>
+        )}
+
         {loading && (
           <ResultsSkeleton />
         )}
@@ -524,7 +570,19 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
           </div>
         )}
 
-        {!loading && data?.success && visibleGroups.map(g => {
+        {!loading && data?.success && visibleGroups.length > 0 && displayedGroups.length === 0 && (
+          <div style={{ padding: '48px 24px', textAlign: 'center', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18 }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🔍</div>
+            <p className="font-th" style={{ fontSize: '1.05rem', color: 'var(--text-2)' }}>
+              {t.noSearchResults}
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-3)', marginTop: 6 }}>
+              {searchQuery}
+            </p>
+          </div>
+        )}
+
+        {!loading && data?.success && displayedGroups.map(g => {
           const m = metaFor(g.group_code)
           return (
             <div key={g.group_code} style={{ marginBottom: 36 }}>
@@ -868,7 +926,7 @@ function NumberCell({ label, value, accentColor, accentHighlight, variant }: {
         fontWeight: 800,
         fontSize: '1.6rem',
         lineHeight: 1, letterSpacing: '0.05em',
-        background: `linear-gradient(130deg, #f5d060, ${accentColor})`,
+        background: `linear-gradient(130deg, ${accentHighlight}, ${accentColor})`,
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
         // filter removed,
       }}>{value || '—'}</div>

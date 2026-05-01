@@ -42,6 +42,10 @@ export interface Dict {
   menuLuckyNumbers: string
   menuArticles: string
   menuLotteryFormula: string
+  searchLottery: string
+  searchLotteryPlaceholder: string
+  clearSearch: string
+  noSearchResults: string
 }
 
 export const DICT: Record<Lang, Dict> = {
@@ -77,6 +81,10 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'เลขเด็ด',
     menuArticles: 'บทความ',
     menuLotteryFormula: 'สูตรคำนวณหวย',
+    searchLottery: 'ค้นหาชื่อหวย',
+    searchLotteryPlaceholder: 'ค้นหาชื่อหวย เช่น ฮานอย ลาว หุ้น',
+    clearSearch: 'ล้างคำค้นหา',
+    noSearchResults: 'ไม่พบชื่อหวยที่ค้นหา',
   },
   en: {
     brand: 'Lottery Check',
@@ -110,6 +118,10 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'Lucky Numbers',
     menuArticles: 'Articles',
     menuLotteryFormula: 'Lottery Formula',
+    searchLottery: 'Search lottery name',
+    searchLotteryPlaceholder: 'Search lottery name, e.g. Hanoi, Lao, stock',
+    clearSearch: 'Clear search',
+    noSearchResults: 'No lottery name found',
   },
   la: {
     brand: 'ກວດຫວຍ',
@@ -143,6 +155,10 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'ເລກເດັດ',
     menuArticles: 'ບົດຄວາມ',
     menuLotteryFormula: 'ສູດຄຳນວນຫວຍ',
+    searchLottery: 'ຄົ້ນຫາຊື່ຫວຍ',
+    searchLotteryPlaceholder: 'ຄົ້ນຫາຊື່ຫວຍ ເຊັ່ນ ຮານອຍ ລາວ ຫຸ້ນ',
+    clearSearch: 'ລ້າງຄຳຄົ້ນຫາ',
+    noSearchResults: 'ບໍ່ພົບຊື່ຫວຍທີ່ຄົ້ນຫາ',
   },
   kh: {
     brand: 'ឆែកឆ្នោត',
@@ -176,6 +192,10 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'លេខសំណាង',
     menuArticles: 'អត្ថបទ',
     menuLotteryFormula: 'រូបមន្តគណនាឆ្នោត',
+    searchLottery: 'ស្វែងរកឈ្មោះឆ្នោត',
+    searchLotteryPlaceholder: 'ស្វែងរកឈ្មោះឆ្នោត ដូចជា Hanoi, Lao, stock',
+    clearSearch: 'សម្អាតការស្វែងរក',
+    noSearchResults: 'រកមិនឃើញឈ្មោះឆ្នោត',
   },
 }
 

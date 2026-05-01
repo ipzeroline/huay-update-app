@@ -859,6 +859,73 @@ body::before {
 }
 .header-lang-desktop { display: block; }
 
+.market-search-section {
+  display: flex;
+  align-items: center;
+  margin: -4px 0 20px;
+}
+
+.market-search-field {
+  position: relative;
+  width: min(100%, 480px);
+  height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+.market-search-field > svg {
+  position: absolute;
+  left: 13px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.market-search-input {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.025);
+  color: var(--text);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.95rem;
+  padding: 0 42px 0 40px;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.market-search-input::placeholder {
+  color: rgba(201,196,182,0.72);
+}
+
+.market-search-input:focus {
+  outline: none;
+  border-color: rgba(212,175,55,0.42);
+  background: rgba(212,175,55,0.045);
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+}
+
+.market-search-clear {
+  position: absolute;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.market-search-clear:hover {
+  color: var(--gold-light);
+  border-color: rgba(212,175,55,0.28);
+  background: rgba(212,175,55,0.08);
+}
+
 .breadcrumbs {
   position: relative;
   z-index: 1;
