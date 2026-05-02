@@ -782,9 +782,13 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
   const top2 = r?.result_top_2 || rn?.top_2 || ''
   const bottom2 = r?.result_bottom_2 || rn?.bottom_2 || ''
   const firstPrize = r?.first_prize || rn?.first_prize || ''
+  const historyHref = `${langPrefix}/market/${market.market_id}`
 
   return (
-    <div
+    <Link
+      href={historyHref}
+      aria-label={`ดูผลย้อนหลัง ${market.market_name}`}
+      title="ดูผลย้อนหลัง"
       style={{
         background: hasResult
           ? `linear-gradient(135deg, ${accentColor}0e 0%, rgba(8,8,16,0.95) 70%)`
@@ -796,6 +800,8 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
         textAlign: 'left', width: '100%', color: 'inherit',
         transition: 'all 0.18s ease',
         display: 'flex', flexDirection: 'column',
+        cursor: 'pointer',
+        textDecoration: 'none',
       }}
       onMouseEnter={e => {
         const el = e.currentTarget
@@ -810,8 +816,8 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
         el.style.borderColor = hasResult ? accentColor + '25' : 'var(--border)'
       }}
     >
-      <Link
-        href={`${langPrefix}/market/${market.market_id}`}
+      <span
+        aria-hidden="true"
         style={{
           position: 'absolute', top: 10, right: 10, zIndex: 2,
           width: 30, height: 30, borderRadius: 8,
@@ -820,15 +826,11 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
           background: `${accentColor}14`,
           border: `1px solid ${accentColor}35`,
           color: accentColor,
-          cursor: 'pointer',
           fontSize: '1rem',
-          textDecoration: 'none',
         }}
-        aria-label={`ดูผลย้อนหลัง ${market.market_name}`}
-        title="ดูผลย้อนหลัง"
       >
         🕘
-      </Link>
+      </span>
       {/* header: logo + name + time */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, paddingRight: 38 }}>
         {market.market_logo && (
@@ -899,7 +901,7 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
           marginTop: 'auto',
         }}>— {t.notYet} —</div>
       )}
-    </div>
+    </Link>
   )
 }
 
