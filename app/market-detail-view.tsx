@@ -98,7 +98,7 @@ export function MarketDetailPanel({
         )}
         {market.market_logo && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={market.market_logo} alt="" className="market-detail-logo" />
+          <img src={market.market_logo} alt="" className="market-detail-logo" loading="lazy" decoding="async" />
         )}
         <div className="market-detail-title">
           <h1>{m?.name ?? market.market_name}</h1>

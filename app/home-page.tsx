@@ -7,6 +7,7 @@ import {
   absoluteUrl,
   baseOpenGraph,
   baseTwitter,
+  breadcrumbJsonLd,
   languageAlternates,
   lotteryPageDescription,
   lotteryPageTitle,
@@ -20,7 +21,7 @@ export function homeMetadata(lang: Lang, canonical = '/'): Metadata {
   const description = lotteryPageDescription(date, lang)
 
   return {
-    title,
+    title: { absolute: title },
     description,
     keywords: siteKeywords,
     alternates: {
@@ -81,6 +82,9 @@ export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; 
       })),
     },
   }
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: 'หน้าแรก', item: canonical },
+  ])
 
   return (
     <>
@@ -91,6 +95,10 @@ export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <noscript>
         <section style={{ padding: 24, maxWidth: 1280, margin: '0 auto' }}>
@@ -119,7 +127,7 @@ export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; 
         initialLang={lang}
         langPrefix={`/${lang}`}
       />
-      <LotterySeoContent currentDate={date} lang={lang} />
+      <LotterySeoContent currentDate={date} lang={lang} markets={allMarkets} />
     </>
   )
 }

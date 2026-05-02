@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getSiteUrl } from '@/lib/site-url'
 import { fetchLotteryByDate, todayBangkok } from '@/lib/lottery-api'
 import { localizedPath, lotteryGroups, seoLangs } from '@/lib/seo'
+import { lotterySeoPages } from '@/lib/lottery-seo-pages'
 
 function addDays(date: string, amount: number): string {
   const d = new Date(`${date}T12:00:00`)
@@ -50,6 +51,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly' as const,
     priority: lang === 'th' ? 0.72 : 0.58,
   }))
+  const topicUrls = seoLangs.flatMap(lang => Object.keys(lotterySeoPages).map(slug => ({
+    url: `${siteUrl}${localizedPath(`/lottery/${slug}`, lang)}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: lang === 'th' ? 0.78 : 0.64,
+  })))
   const groupDailyUrls = seoLangs.flatMap(lang => lotteryGroups.flatMap(group => (
     dailyUrls.slice(0, 30).map(item => ({
       url: `${siteUrl}${localizedPath(item.path.replace('/lottery/', `/lottery/group/${group.code}/`), lang)}`,
@@ -76,6 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...languageHomeUrls,
     ...groupUrls,
     ...formulaUrls,
+    ...topicUrls,
     ...marketUrls,
     ...languageDailyUrls,
     ...groupDailyUrls,

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import './globals.css'
+import SiteFooter from './site-footer'
 import { getSiteUrl } from '@/lib/site-url'
 import { baseOpenGraph, baseTwitter, siteDescription, siteKeywords, siteName, siteTitle } from '@/lib/seo'
 
@@ -25,8 +26,8 @@ export const metadata: Metadata = {
   },
   formatDetection: { telephone: false, email: false, address: false },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
-  alternates: { canonical: '/' },
-  openGraph: baseOpenGraph('/', siteTitle, siteDescription),
+  alternates: { canonical: '/th' },
+  openGraph: baseOpenGraph('/th', siteTitle, siteDescription),
   twitter: baseTwitter(siteTitle, siteDescription),
 }
 
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="th">
       <body>
         {children}
+        <SiteFooter />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
           strategy="afterInteractive"

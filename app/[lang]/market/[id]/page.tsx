@@ -10,6 +10,7 @@ import {
   absoluteUrl,
   baseOpenGraph,
   baseTwitter,
+  breadcrumbJsonLd,
   formatSeoDate,
   isSeoLang,
   languageAlternates,
@@ -130,11 +131,17 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
       })),
     },
   }
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
+    { name: market.group_name },
+    { name: market.name, item: localizedPath(marketPath(id), currentLang) },
+  ])
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <div className="breadcrumbs-row">
         <Breadcrumbs items={[
           { href: localizedPath('/', currentLang), label: 'หน้าแรก' },

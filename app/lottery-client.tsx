@@ -9,6 +9,7 @@ import {
   Menu, X, Compass, Sparkles, FileText, Calculator, Search,
 } from 'lucide-react'
 import { DICT, LANGS, LANG_LABEL, LANG_FLAG, isLang, type Lang, type Dict } from '@/lib/i18n'
+import { getLotterySeoPage, lotterySeoPages } from '@/lib/lottery-seo-pages'
 
 /* ─── Types matching the 1168lot API ─── */
 interface ResultNumber {
@@ -74,6 +75,30 @@ const GROUP_NAV = [
   { code: 'lotto-stock', label: 'หวยหุ้น' },
   { code: 'lotto-daily', label: 'หวยรายวัน' },
 ]
+const MENU_TOPIC_TITLE: Record<Lang, string> = {
+  th: 'ข้อมูลหวย',
+  en: 'Lottery guides',
+  la: 'ຂໍ້ມູນຫວຍ',
+  kh: 'ព័ត៌មានឆ្នោត',
+}
+const PAGE_HEADING: Record<Lang, { all: string; group: (name: string) => string }> = {
+  th: {
+    all: 'ผลหวยวันนี้ ครบทุกประเภท',
+    group: name => `ผล${name}วันนี้`,
+  },
+  en: {
+    all: 'Today lottery results by category',
+    group: name => `${name} results today`,
+  },
+  la: {
+    all: 'ຜົນຫວຍມື້ນີ້ ຄົບທຸກປະເພດ',
+    group: name => `ຜົນ${name}ມື້ນີ້`,
+  },
+  kh: {
+    all: 'លទ្ធផលឆ្នោតថ្ងៃនេះ គ្រប់ប្រភេទ',
+    group: name => `លទ្ធផល${name}ថ្ងៃនេះ`,
+  },
+}
 
 /* per-group highlight palettes — cycle through these per market card */
 const GROUP_PALETTE: Record<string, string[]> = {
@@ -322,6 +347,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
   const previousDate = addDays(date, -1)
   const nextDate = addDays(date, 1)
   const dateHref = (value: string) => groupCode ? `${langPrefix}/lottery/group/${groupCode}/${value}` : lotteryDatePath(value, langPrefix)
+  const pageHeading = groupName ? PAGE_HEADING[lang].group(groupName) : PAGE_HEADING[lang].all
 
   return (
     <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -343,7 +369,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
               <Link href={langPrefix || '/'} className="header-brand" aria-label={t.brand}>
               <div className="header-logo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.png" alt="Huay Update" />
+                <img src="/logo.png" alt="Huay Update" width={1024} height={1024} decoding="async" />
               </div>
               <div className="header-brand-text">
                 <div className="header-brand-name font-th">{t.brand}</div>
@@ -434,9 +460,20 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
               <Link href={`${langPrefix}/lottery-formula`} className="menu-drawer-item" onClick={() => setMenuOpen(false)}>
                 <Calculator size={18} /> <span>{t.menuLotteryFormula}</span>
               </Link>
-              <Link href={`${langPrefix}/articles`} className="menu-drawer-item" onClick={() => setMenuOpen(false)}>
-                <FileText size={18} /> <span>{t.menuArticles}</span>
-              </Link>
+              <div className="menu-drawer-section-title">{MENU_TOPIC_TITLE[lang]}</div>
+              {Object.keys(lotterySeoPages).map(slug => {
+                const topic = getLotterySeoPage(slug, lang)
+                return topic ? (
+                  <Link
+                    key={slug}
+                    href={`${langPrefix}/lottery/${slug}`}
+                    className="menu-drawer-item"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <FileText size={18} /> <span>{topic.h1}</span>
+                  </Link>
+                ) : null
+              })}
             </nav>
           </aside>
         </div>
@@ -501,7 +538,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 18, gap: 12, flexWrap: 'wrap' }}>
           <div>
             <h1 className="font-th" style={{ fontSize: '1.3rem', fontWeight: 700, lineHeight: 1.1 }}>
-              {t.todayResults} {fullDate(date, lang)}
+              {pageHeading}
             </h1>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-3)', marginTop: 3 }}>📅 {fullDate(date, lang)}</p>
           </div>
@@ -835,7 +872,7 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, paddingRight: 38 }}>
         {market.market_logo && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={market.market_logo} alt="" style={{
+          <img src={market.market_logo} alt="" loading="lazy" decoding="async" style={{
             width: 36, height: 36, borderRadius: 9, objectFit: 'cover',
             border: '1px solid var(--border)', flexShrink: 0,
           }} />

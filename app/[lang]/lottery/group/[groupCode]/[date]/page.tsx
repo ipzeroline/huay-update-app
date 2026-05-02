@@ -9,6 +9,7 @@ import {
   absoluteUrl,
   baseOpenGraph,
   baseTwitter,
+  breadcrumbJsonLd,
   formatSeoDate,
   getLotteryGroup,
   isIsoDate,
@@ -106,11 +107,17 @@ export default async function LangLotteryGroupDatePage({ params }: PageProps) {
       })),
     },
   }
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
+    { name: groupMeta.name, item: localizedPath(`/lottery/group/${groupCode}`, currentLang) },
+    { name: formatSeoDate(date, currentLang), item: localizedPath(groupDatePath(groupCode, date), currentLang) },
+  ])
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Breadcrumbs items={[
         { href: localizedPath('/', currentLang), label: 'หน้าแรก' },
         { href: localizedPath(`/lottery/group/${groupCode}`, currentLang), label: groupMeta.name },
@@ -124,7 +131,7 @@ export default async function LangLotteryGroupDatePage({ params }: PageProps) {
         groupName={groupMeta.name}
         langPrefix={`/${currentLang}`}
       />
-      <LotterySeoContent currentDate={date} lang={currentLang} />
+      <LotterySeoContent currentDate={date} lang={currentLang} markets={allMarkets} />
     </>
   )
 }

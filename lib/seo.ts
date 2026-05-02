@@ -5,7 +5,7 @@ import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 export const seoLangs: Lang[] = ['th', 'en', 'la', 'kh']
 export const siteName = 'Huay Update'
 export const siteTitle = 'ตรวจหวย Huay Update | ผลหวยไทย ต่างประเทศ หุ้น รายวัน ล่าสุดวันนี้'
-export const siteDescription = 'ศูนย์รวมผลหวยครบทุกประเภท หวยไทย หวยต่างประเทศ หวยหุ้น หวยรายวัน อัปเดตทันทีที่ออกผล รวดเร็ว แม่นยำ ฟรี ไม่มีค่าใช้จ่าย'
+export const siteDescription = 'ตรวจผลหวยวันนี้ ครบทุกประเภท หวยไทย หวยลาว หวยหุ้น ฮานอย อัปเดตรวดเร็ว ดูย้อนหลังได้ทันที ที่ huayupdate.live'
 export const siteKeywords = [
   'ตรวจหวย',
   'ผลหวย',
@@ -93,18 +93,24 @@ export function formatSeoDate(date: string, lang: Lang = 'th'): string {
   })
 }
 
+export function formatThaiShortSeoDate(date: string): string {
+  const d = new Date(`${date}T12:00:00`)
+  const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+  return `${d.getDate()} ${months[d.getMonth()]} ${String(d.getFullYear() + 543).slice(-2)}`
+}
+
 export function lotteryPageTitle(date: string, lang: Lang = 'th'): string {
   if (lang === 'en') return `Lottery results for ${formatSeoDate(date, lang)}`
   if (lang === 'la') return `ຜົນຫວຍວັນທີ ${formatSeoDate(date, lang)}`
   if (lang === 'kh') return `លទ្ធផលឆ្នោតថ្ងៃទី ${formatSeoDate(date, lang)}`
-  return `ผลหวยประจำวันที่ ${formatSeoDate(date, lang)}`
+  return `ผลหวยวันนี้ ${formatThaiShortSeoDate(date)} ครบทุกประเภท | ${siteName}`
 }
 
 export function lotteryPageDescription(date: string, lang: Lang = 'th'): string {
   if (lang === 'en') return `Check lottery results for ${formatSeoDate(date, lang)}, including Thai lottery, foreign lottery, stock lottery, daily lottery, 3 top, 2 top, and 2 bottom results.`
   if (lang === 'la') return `ກວດຜົນຫວຍວັນທີ ${formatSeoDate(date, lang)} ລວມຫວຍໄທ ຫວຍຕ່າງປະເທດ ຫວຍຫຸ້ນ ແລະຫວຍລາຍວັນ`
   if (lang === 'kh') return `ពិនិត្យលទ្ធផលឆ្នោតថ្ងៃទី ${formatSeoDate(date, lang)} រួមមានឆ្នោតថៃ ឆ្នោតបរទេស ឆ្នោតហ៊ុន និងឆ្នោតប្រចាំថ្ងៃ`
-  return `ตรวจผลหวยประจำวันที่ ${formatSeoDate(date, lang)} ครบทั้งหวยไทย หวยต่างประเทศ หวยหุ้น และหวยรายวัน พร้อมเลข 3 ตัวบน 2 ตัวบน และ 2 ตัวล่าง`
+  return siteDescription
 }
 
 export function lotteryGroupTitle(code: string): string {
@@ -119,19 +125,32 @@ export function baseOpenGraph(path: string, title: string, description: string):
   return {
     type: 'website',
     locale: 'th_TH',
-    url: path,
+    url: absoluteUrl(path),
     siteName,
-    title,
+    title: title.includes(siteName) ? title : `${title} | ${siteName}`,
     description,
-    images: '/opengraph-image',
+    images: [{ url: absoluteUrl('/og-image.png'), width: 1200, height: 630, alt: 'ผลหวยวันนี้ Huay Update' }],
   }
 }
 
 export function baseTwitter(title: string, description: string): Metadata['twitter'] {
   return {
     card: 'summary_large_image',
-    title,
+    title: title.includes(siteName) ? title : `${title} | ${siteName}`,
     description,
-    images: '/opengraph-image',
+    images: [absoluteUrl('/og-image.png')],
+  }
+}
+
+export function breadcrumbJsonLd(items: { name: string; item?: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      ...(item.item ? { item: absoluteUrl(item.item) } : {}),
+    })),
   }
 }

@@ -3,12 +3,15 @@ import { notFound } from 'next/navigation'
 import Breadcrumbs from '@/app/breadcrumbs'
 import LotteryApp from '@/app/lottery-client'
 import LotterySeoContent, { faqJsonLd } from '@/app/lottery-seo-content'
+import LotteryTopicPage from '@/app/lottery-topic-page'
 import { fetchLotteryByDate, todayBangkok, type LotteryByDateResponse } from '@/lib/lottery-api'
 import { DICT, LANG_LOCALE, type Lang } from '@/lib/i18n'
+import { getLotterySeoPage, isLotterySeoSlug } from '@/lib/lottery-seo-pages'
 import {
   absoluteUrl,
   baseOpenGraph,
   baseTwitter,
+  breadcrumbJsonLd,
   isIsoDate,
   isSeoLang,
   languageAlternates,
@@ -33,9 +36,59 @@ function datePath(date: string) {
   return `/lottery/${date}`
 }
 
+function topicPath(slug: string) {
+  return `/lottery/${slug}`
+}
+
+function faqPageJsonLd(faq: { question: string; answer: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  }
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, date } = await params
-  if (!isSeoLang(lang) || !isIsoDate(date) || isFutureDate(date)) {
+  if (!isSeoLang(lang)) {
+    return {
+      title: 'Not found',
+      robots: { index: false, follow: false },
+    }
+  }
+
+  if (!isIsoDate(date)) {
+    const topic = getLotterySeoPage(date, lang)
+    if (!topic) {
+      return {
+        title: 'Not found',
+        robots: { index: false, follow: false },
+      }
+    }
+
+    const path = localizedPath(topicPath(date), lang)
+    return {
+      title: topic.title,
+      description: topic.description,
+      keywords: [...siteKeywords, ...topic.keywords],
+      alternates: {
+        canonical: path,
+        languages: languageAlternates(topicPath(date)),
+      },
+      openGraph: baseOpenGraph(path, topic.title, topic.description),
+      twitter: baseTwitter(topic.title, topic.description),
+      robots: { index: true, follow: true },
+    }
+  }
+
+  if (isFutureDate(date)) {
     return {
       title: 'Not found',
       robots: { index: false, follow: false },
@@ -47,7 +100,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = lotteryPageDescription(date, lang)
 
   return {
-    title,
+    title: lang === 'th' ? { absolute: title } : title,
     description,
     keywords: siteKeywords,
     alternates: {
@@ -62,9 +115,44 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function LangLotteryDatePage({ params }: PageProps) {
   const { lang, date } = await params
-  if (!isSeoLang(lang) || !isIsoDate(date) || isFutureDate(date)) notFound()
+  if (!isSeoLang(lang)) notFound()
 
   const currentLang = lang as Lang
+  if (!isIsoDate(date)) {
+    if (!isLotterySeoSlug(date)) notFound()
+    const topic = getLotterySeoPage(date, currentLang)
+    if (!topic) notFound()
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: topic.title,
+      description: topic.description,
+      inLanguage: LANG_LOCALE[currentLang],
+      url: absoluteUrl(localizedPath(topicPath(date), currentLang)),
+      publisher: {
+        '@type': 'Organization',
+        name: siteName,
+        url: absoluteUrl('/'),
+      },
+    }
+    const breadcrumbLd = breadcrumbJsonLd([
+      { name: currentLang === 'en' ? 'Home' : 'หน้าแรก', item: localizedPath('/', currentLang) },
+      { name: topic.h1, item: localizedPath(topicPath(date), currentLang) },
+    ])
+
+    return (
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd(topic.faq)) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+        <LotteryTopicPage lang={currentLang} slug={date} />
+      </>
+    )
+  }
+
+  if (isFutureDate(date)) notFound()
+
   const t = DICT[currentLang]
   let initialData: LotteryByDateResponse | null = null
   try {
@@ -107,6 +195,10 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
       })),
     },
   }
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
+    { name: lotteryPageTitle(date, currentLang), item: localizedPath(datePath(date), currentLang) },
+  ])
 
   return (
     <>
@@ -118,6 +210,10 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <Breadcrumbs items={[
         { href: localizedPath('/', currentLang), label: 'หน้าแรก' },
         { label: lotteryPageTitle(date, currentLang) },
@@ -128,7 +224,7 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
         initialLang={currentLang}
         langPrefix={`/${currentLang}`}
       />
-      <LotterySeoContent currentDate={date} lang={currentLang} />
+      <LotterySeoContent currentDate={date} lang={currentLang} markets={allMarkets} />
     </>
   )
 }

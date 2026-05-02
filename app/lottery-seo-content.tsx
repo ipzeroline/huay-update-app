@@ -1,6 +1,12 @@
 import Link from 'next/link'
 import { formatSeoDate, localizedPath, lotteryGroups } from '@/lib/seo'
 import type { Lang } from '@/lib/i18n'
+import { getLotterySeoPage, lotterySeoPages } from '@/lib/lottery-seo-pages'
+
+type SeoMarketLink = {
+  market_id: number
+  market_name: string
+}
 
 export const LOTTERY_FAQS = [
   {
@@ -46,9 +52,18 @@ export function faqJsonLd() {
   }
 }
 
-export default function LotterySeoContent({ currentDate, lang = 'th' }: { currentDate: string; lang?: Lang }) {
+export default function LotterySeoContent({
+  currentDate,
+  lang = 'th',
+  markets = [],
+}: {
+  currentDate: string
+  lang?: Lang
+  markets?: SeoMarketLink[]
+}) {
   const dates = recentLotteryDates(currentDate)
   const href = (path: string) => localizedPath(path, lang)
+  const visibleMarkets = markets.slice(0, 24)
 
   return (
     <section className="seo-section" aria-label="ข้อมูลตรวจหวยและผลหวยย้อนหลัง">
@@ -83,6 +98,33 @@ export default function LotterySeoContent({ currentDate, lang = 'th' }: { curren
           </div>
         </div>
 
+        <div className="seo-link-block">
+          <h2>หน้าข้อมูลหวยเฉพาะ</h2>
+          <div className="seo-date-links">
+            {Object.keys(lotterySeoPages).map(slug => {
+              const page = getLotterySeoPage(slug, lang)
+              return page ? (
+                <Link key={slug} href={href(`/lottery/${slug}`)} className="seo-date-link">
+                  {page.h1}
+                </Link>
+              ) : null
+            })}
+          </div>
+        </div>
+
+        {visibleMarkets.length > 0 && (
+          <div className="seo-link-block">
+            <h2>ผลหวยแยกตามตลาด</h2>
+            <div className="seo-date-links">
+              {visibleMarkets.map(market => (
+                <Link key={market.market_id} href={href(`/market/${market.market_id}`)} className="seo-date-link">
+                  ผล{market.market_name}ย้อนหลัง
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="seo-faq">
           <h2>คำถามที่พบบ่อย</h2>
           <div className="seo-faq-grid">
@@ -96,7 +138,7 @@ export default function LotterySeoContent({ currentDate, lang = 'th' }: { curren
         </div>
 
         <div className="seo-copy">
-          <h1>ตรวจหวย Huay Update — ผลหวยล่าสุดวันนี้ ครบทุกประเภท</h1>
+          <h2>ตรวจหวย Huay Update — ผลหวยล่าสุดวันนี้ ครบทุกประเภท</h2>
           <p>
             รวมผลหวยล่าสุดครบทุกประเภท ทั้งหวยไทย หวยหุ้น และหวยต่างประเทศ
             อัปเดตรวดเร็ว แม่นยำ ทุกวัน ที่นี่ที่เดียว
