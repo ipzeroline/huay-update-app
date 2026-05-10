@@ -46,6 +46,15 @@ export interface Dict {
   searchLotteryPlaceholder: string
   clearSearch: string
   noSearchResults: string
+  addToHomeScreen: string
+  hideAddToHomeScreen: string
+  installApp: string
+  close: string
+  iosInstallStepShare: string
+  iosInstallStepAddToHome: string
+  iosInstallStepConfirm: string
+  androidInstallStepMenu: string
+  androidInstallStepInstall: string
 }
 
 export const DICT: Record<Lang, Dict> = {
@@ -85,6 +94,15 @@ export const DICT: Record<Lang, Dict> = {
     searchLotteryPlaceholder: 'ค้นหาชื่อหวย เช่น ฮานอย ลาว หุ้น',
     clearSearch: 'ล้างคำค้นหา',
     noSearchResults: 'ไม่พบชื่อหวยที่ค้นหา',
+    addToHomeScreen: 'เพิ่มลงหน้าจอหลัก',
+    hideAddToHomeScreen: 'ซ่อนปุ่มเพิ่มลงหน้าจอหลัก',
+    installApp: 'ติดตั้งแอป',
+    close: 'ปิด',
+    iosInstallStepShare: 'แตะปุ่ม Share ใน Safari',
+    iosInstallStepAddToHome: 'เลือก Add to Home Screen',
+    iosInstallStepConfirm: 'แตะ Add เพื่อวางไอคอนบนหน้าจอหลัก',
+    androidInstallStepMenu: 'เปิดเมนูของเบราว์เซอร์',
+    androidInstallStepInstall: 'เลือก Install app หรือ Add to Home screen',
   },
   en: {
     brand: 'Lottery Check',
@@ -122,6 +140,15 @@ export const DICT: Record<Lang, Dict> = {
     searchLotteryPlaceholder: 'Search lottery name, e.g. Hanoi, Lao, stock',
     clearSearch: 'Clear search',
     noSearchResults: 'No lottery name found',
+    addToHomeScreen: 'Add to Home Screen',
+    hideAddToHomeScreen: 'Hide Add to Home Screen button',
+    installApp: 'Install app',
+    close: 'Close',
+    iosInstallStepShare: 'Tap the Share button in Safari',
+    iosInstallStepAddToHome: 'Choose Add to Home Screen',
+    iosInstallStepConfirm: 'Tap Add to place the icon on your Home Screen',
+    androidInstallStepMenu: 'Open your browser menu',
+    androidInstallStepInstall: 'Choose Install app or Add to Home screen',
   },
   la: {
     brand: 'ກວດຫວຍ',
@@ -159,6 +186,15 @@ export const DICT: Record<Lang, Dict> = {
     searchLotteryPlaceholder: 'ຄົ້ນຫາຊື່ຫວຍ ເຊັ່ນ ຮານອຍ ລາວ ຫຸ້ນ',
     clearSearch: 'ລ້າງຄຳຄົ້ນຫາ',
     noSearchResults: 'ບໍ່ພົບຊື່ຫວຍທີ່ຄົ້ນຫາ',
+    addToHomeScreen: 'ເພີ່ມໄປໜ້າຈໍຫຼັກ',
+    hideAddToHomeScreen: 'ເຊື່ອງປຸ່ມເພີ່ມໄປໜ້າຈໍຫຼັກ',
+    installApp: 'ຕິດຕັ້ງແອັບ',
+    close: 'ປິດ',
+    iosInstallStepShare: 'ແຕະປຸ່ມ Share ໃນ Safari',
+    iosInstallStepAddToHome: 'ເລືອກ Add to Home Screen',
+    iosInstallStepConfirm: 'ແຕະ Add ເພື່ອວາງໄອຄອນເທິງໜ້າຈໍຫຼັກ',
+    androidInstallStepMenu: 'ເປີດເມນູຂອງບຣາວເຊີ',
+    androidInstallStepInstall: 'ເລືອກ Install app ຫຼື Add to Home screen',
   },
   kh: {
     brand: 'ឆែកឆ្នោត',
@@ -196,6 +232,15 @@ export const DICT: Record<Lang, Dict> = {
     searchLotteryPlaceholder: 'ស្វែងរកឈ្មោះឆ្នោត ដូចជា Hanoi, Lao, stock',
     clearSearch: 'សម្អាតការស្វែងរក',
     noSearchResults: 'រកមិនឃើញឈ្មោះឆ្នោត',
+    addToHomeScreen: 'បន្ថែមទៅអេក្រង់ដើម',
+    hideAddToHomeScreen: 'លាក់ប៊ូតុងបន្ថែមទៅអេក្រង់ដើម',
+    installApp: 'ដំឡើងកម្មវិធី',
+    close: 'បិទ',
+    iosInstallStepShare: 'ចុចប៊ូតុង Share ក្នុង Safari',
+    iosInstallStepAddToHome: 'ជ្រើស Add to Home Screen',
+    iosInstallStepConfirm: 'ចុច Add ដើម្បីដាក់រូបតំណាងលើអេក្រង់ដើម',
+    androidInstallStepMenu: 'បើកម៉ឺនុយរបស់កម្មវិធីរុករក',
+    androidInstallStepInstall: 'ជ្រើស Install app ឬ Add to Home screen',
   },
 }
 

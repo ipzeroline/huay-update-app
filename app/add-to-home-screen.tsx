@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Download, Plus, Share, Smartphone, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { DICT, isLang, type Lang } from '@/lib/i18n'
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
@@ -30,9 +32,15 @@ declare global {
 }
 
 export default function AddToHomeScreen() {
+  const pathname = usePathname()
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showButton, setShowButton] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
+  const lang: Lang = useMemo(() => {
+    const value = pathname.split('/')[1]
+    return isLang(value) ? value : 'th'
+  }, [pathname])
+  const t = DICT[lang]
   const platform = useMemo(() => {
     if (isIosDevice()) return 'ios'
     if (isAndroidDevice()) return 'android'
@@ -89,9 +97,9 @@ export default function AddToHomeScreen() {
       <div className="a2hs-button-wrap">
         <button type="button" className="a2hs-button" onClick={install}>
           <Smartphone size={17} />
-          <span>เพิ่มลงหน้าจอหลัก</span>
+          <span>{t.addToHomeScreen}</span>
         </button>
-        <button type="button" className="a2hs-dismiss" onClick={dismiss} aria-label="ซ่อนปุ่มเพิ่มลงหน้าจอหลัก">
+        <button type="button" className="a2hs-dismiss" onClick={dismiss} aria-label={t.hideAddToHomeScreen}>
           <X size={15} />
         </button>
       </div>
@@ -101,10 +109,10 @@ export default function AddToHomeScreen() {
           <div className="a2hs-panel" onClick={event => event.stopPropagation()}>
             <div className="a2hs-panel-head">
               <div>
-                <span>ติดตั้งแอป</span>
-                <strong>เพิ่มลงหน้าจอหลัก</strong>
+                <span>{t.installApp}</span>
+                <strong>{t.addToHomeScreen}</strong>
               </div>
-              <button type="button" className="icon-btn" onClick={() => setShowInstructions(false)} aria-label="ปิด">
+              <button type="button" className="icon-btn" onClick={() => setShowInstructions(false)} aria-label={t.close}>
                 <X size={16} />
               </button>
             </div>
@@ -114,26 +122,26 @@ export default function AddToHomeScreen() {
                 <>
                   <li>
                     <Share size={18} />
-                    <span>แตะปุ่ม Share ใน Safari</span>
+                    <span>{t.iosInstallStepShare}</span>
                   </li>
                   <li>
                     <Plus size={18} />
-                    <span>เลือก Add to Home Screen</span>
+                    <span>{t.iosInstallStepAddToHome}</span>
                   </li>
                   <li>
                     <Download size={18} />
-                    <span>แตะ Add เพื่อวางไอคอนบนหน้าจอหลัก</span>
+                    <span>{t.iosInstallStepConfirm}</span>
                   </li>
                 </>
               ) : (
                 <>
                   <li>
                     <Download size={18} />
-                    <span>เปิดเมนูของเบราว์เซอร์</span>
+                    <span>{t.androidInstallStepMenu}</span>
                   </li>
                   <li>
                     <Plus size={18} />
-                    <span>เลือก Install app หรือ Add to Home screen</span>
+                    <span>{t.androidInstallStepInstall}</span>
                   </li>
                 </>
               )}
