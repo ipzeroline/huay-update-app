@@ -82,15 +82,32 @@ export const lotterySeoPages = {
       ],
       keywords: ['លទ្ធផលឆ្នោតហាណូយ', 'Hanoi lottery', 'Hanoi VIP'],
     },
+    zh: {
+      title: '今日河内彩票开奖结果 VIP 普通 特别及历史记录',
+      description: '在 Huay Update 查看今日河内彩票开奖结果，包括河内 VIP、普通、特别、HD、TV 及历史结果。',
+      h1: '今日河内彩票开奖结果',
+      intro: '本页汇总河内彩票的每日结果和历史记录，方便用户在一个页面查看 Huay Update 支持的主要河内彩票市场。',
+      sections: [
+        { heading: '什么是河内彩票', body: '河内彩票是越南相关彩票市场的统称，例如河内 VIP、普通河内、特别河内、河内 HD、河内 TV 和河内 ASEAN。不同市场可能有不同的开奖时间和结果格式。' },
+        { heading: '河内彩票历史结果', body: 'Huay Update 按日期和市场整理历史结果，方便查看前三位、前两位和后两位结果。' },
+        { heading: '如何查看结果', body: '选择要查询的日期，然后打开对应的河内市场页面查看详情。如果某个市场尚未更新，页面会显示当前最新状态。' },
+      ],
+      faq: [
+        { question: '河内彩票结果什么时候更新', answer: '当各个河内市场有最新数据时，系统会按开奖时间更新结果。' },
+        { question: '包含哪些河内市场', answer: '根据可用数据，可能包含 Hanoi VIP、普通 Hanoi、特别 Hanoi、Hanoi HD、Hanoi TV、Hanoi Star 和 Hanoi ASEAN。' },
+        { question: '可以查看河内彩票历史记录吗', answer: '可以。可使用日期页面或单个市场页面查看过去的河内彩票结果。' },
+      ],
+      keywords: ['河内彩票开奖结果', '今日河内彩票', 'Hanoi VIP', '河内彩票历史'],
+    },
   },
-  lao: makeSimplePage('หวยลาว', 'Lao lottery', 'ຫວຍລາວ', 'ឆ្នោតឡាវ', ['หวยลาว', 'ลาว TV', 'ลาวประตูชัย', 'ลาวสันติภาพ']),
-  thai: makeSimplePage('หวยไทย', 'Thai lottery', 'ຫວຍໄທ', 'ឆ្នោតថៃ', ['หวยไทย', 'ตรวจหวยรัฐบาล', 'สลากกินแบ่งรัฐบาล']),
-  stock: makeSimplePage('หวยหุ้น', 'stock lottery', 'ຫວຍຫຸ້ນ', 'ឆ្នោតហ៊ុន', ['หวยหุ้น', 'หุ้นดาวโจนส์', 'นิเคอิ', 'ฮั่งเส็ง']),
-  daily: makeSimplePage('หวยรายวัน', 'daily lottery', 'ຫວຍລາຍວັນ', 'ឆ្នោតប្រចាំថ្ងៃ', ['หวยรายวัน', 'ผลหวยวันนี้', 'หวยออกทุกวัน']),
-  foreign: makeSimplePage('หวยต่างประเทศ', 'international lottery', 'ຫວຍຕ່າງປະເທດ', 'ឆ្នោតបរទេស', ['หวยต่างประเทศ', 'หวยฮานอย', 'หวยลาว', 'หวยมาเลเซีย']),
+  lao: makeSimplePage('หวยลาว', 'Lao lottery', 'ຫວຍລາວ', 'ឆ្នោតឡាវ', '老挝彩票', ['หวยลาว', 'ลาว TV', 'ลาวประตูชัย', 'ลาวสันติภาพ']),
+  thai: makeSimplePage('หวยไทย', 'Thai lottery', 'ຫວຍໄທ', 'ឆ្នោតថៃ', '泰国彩票', ['หวยไทย', 'ตรวจหวยรัฐบาล', 'สลากกินแบ่งรัฐบาล']),
+  stock: makeSimplePage('หวยหุ้น', 'stock lottery', 'ຫວຍຫຸ້ນ', 'ឆ្នោតហ៊ុន', '股票彩票', ['หวยหุ้น', 'หุ้นดาวโจนส์', 'นิเคอิ', 'ฮั่งเส็ง']),
+  daily: makeSimplePage('หวยรายวัน', 'daily lottery', 'ຫວຍລາຍວັນ', 'ឆ្នោតប្រចាំថ្ងៃ', '每日彩票', ['หวยรายวัน', 'ผลหวยวันนี้', 'หวยออกทุกวัน']),
+  foreign: makeSimplePage('หวยต่างประเทศ', 'international lottery', 'ຫວຍຕ່າງປະເທດ', 'ឆ្នោតបរទេស', '国外彩票', ['หวยต่างประเทศ', 'หวยฮานอย', 'หวยลาว', 'หวยมาเลเซีย']),
 } satisfies Record<string, Record<Lang, SeoPageCopy>>
 
-function makeSimplePage(thName: string, enName: string, laName: string, khName: string, keywords: string[]) {
+function makeSimplePage(thName: string, enName: string, laName: string, khName: string, zhName: string, keywords: string[]) {
   return {
     th: {
       title: `ผล${thName}วันนี้และย้อนหลัง`,
@@ -157,6 +174,23 @@ function makeSimplePage(thName: string, enName: string, laName: string, khName: 
         { question: `លទ្ធផល${khName}អាប់ដេតពេលណា`, answer: `អាប់ដេតនៅពេលមានទិន្នន័យថ្មីពីទីផ្សារដែលគាំទ្រ។` },
         { question: `អាចមើលប្រវត្តិបានទេ`, answer: `បាន តាមទំព័រថ្ងៃ ឬទំព័រទីផ្សារ។` },
         { question: `ត្រូវការគណនីទេ`, answer: `មិនចាំបាច់មានគណនីទេ។` },
+      ],
+      keywords,
+    },
+    zh: {
+      title: `今日${zhName}结果和历史记录`,
+      description: `在 Huay Update 查看今日${zhName}结果和历史结果，按日期与市场整理关键号码。`,
+      h1: `今日${zhName}结果`,
+      intro: `本页汇总${zhName}信息，适合查看最新结果、历史记录以及相关彩票市场页面。`,
+      sections: [
+        { heading: `${zhName}是什么`, body: `${zhName}是 Huay Update 支持的彩票结果分类之一，按日期和市场整理，方便快速查询。` },
+        { heading: `查看历史结果`, body: `可以选择过去日期，或打开单个市场页面查看连续的历史开奖结果。` },
+        { heading: `显示的数据`, body: `网站会根据可用数据展示前三位、前两位、后两位或主要奖项，并在尚无结果时显示状态。` },
+      ],
+      faq: [
+        { question: `${zhName}结果什么时候更新`, answer: `当支持的市场有最新数据时，结果会进行更新。` },
+        { question: `可以查看${zhName}历史记录吗`, answer: `可以，可通过日期页面或市场详情页查看历史结果。` },
+        { question: `查看结果需要注册吗`, answer: `不需要注册，可以直接查看彩票结果。` },
       ],
       keywords,
     },

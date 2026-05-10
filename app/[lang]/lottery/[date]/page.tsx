@@ -118,6 +118,7 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
   if (!isSeoLang(lang)) notFound()
 
   const currentLang = lang as Lang
+  const currentDict = DICT[currentLang]
   if (!isIsoDate(date)) {
     if (!isLotterySeoSlug(date)) notFound()
     const topic = getLotterySeoPage(date, currentLang)
@@ -137,7 +138,7 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
       },
     }
     const breadcrumbLd = breadcrumbJsonLd([
-      { name: currentLang === 'en' ? 'Home' : 'หน้าแรก', item: localizedPath('/', currentLang) },
+      { name: currentDict.home, item: localizedPath('/', currentLang) },
       { name: topic.h1, item: localizedPath(topicPath(date), currentLang) },
     ])
 
@@ -153,7 +154,7 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
 
   if (isFutureDate(date)) notFound()
 
-  const t = DICT[currentLang]
+  const t = currentDict
   let initialData: LotteryByDateResponse | null = null
   try {
     initialData = await fetchLotteryByDate(date, currentLang)
@@ -196,7 +197,7 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
     },
   }
   const breadcrumbLd = breadcrumbJsonLd([
-    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
+    { name: t.home, item: localizedPath('/', currentLang) },
     { name: lotteryPageTitle(date, currentLang), item: localizedPath(datePath(date), currentLang) },
   ])
 
@@ -208,14 +209,14 @@ export default async function LangLotteryDatePage({ params }: PageProps) {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(currentLang)) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <Breadcrumbs items={[
-        { href: localizedPath('/', currentLang), label: 'หน้าแรก' },
+        { href: localizedPath('/', currentLang), label: t.home },
         { label: lotteryPageTitle(date, currentLang) },
       ]} />
       <LotteryApp

@@ -15,9 +15,10 @@ import {
   isIsoDate,
   isSeoLang,
   languageAlternates,
+  localizedLotteryGroupDescription,
+  localizedLotteryGroupTitle,
+  lotteryGroupName,
   localizedPath,
-  lotteryGroupDescription,
-  lotteryGroupTitle,
   siteKeywords,
   siteName,
 } from '@/lib/seo'
@@ -36,6 +37,22 @@ function isFutureDate(date: string): boolean {
   return date > todayBangkok()
 }
 
+function drawDateTitle(title: string, date: string, lang: Lang) {
+  if (lang === 'en') return `${title} for ${formatSeoDate(date, lang)}`
+  if (lang === 'la') return `${title} ງວດວັນທີ ${formatSeoDate(date, lang)}`
+  if (lang === 'kh') return `${title} ថ្ងៃទី ${formatSeoDate(date, lang)}`
+  if (lang === 'zh') return `${title} ${formatSeoDate(date, lang)}`
+  return `${title} งวดวันที่ ${formatSeoDate(date, lang)}`
+}
+
+function drawDateDescription(description: string, date: string, lang: Lang) {
+  if (lang === 'en') return `${description} for ${formatSeoDate(date, lang)}.`
+  if (lang === 'la') return `${description} ສໍາລັບງວດວັນທີ ${formatSeoDate(date, lang)}`
+  if (lang === 'kh') return `${description} សម្រាប់ថ្ងៃទី ${formatSeoDate(date, lang)}`
+  if (lang === 'zh') return `${description} 日期：${formatSeoDate(date, lang)}。`
+  return `${description} สำหรับงวดวันที่ ${formatSeoDate(date, lang)}`
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, groupCode, date } = await params
   const group = getLotteryGroup(groupCode)
@@ -44,8 +61,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const path = localizedPath(groupDatePath(groupCode, date), lang)
-  const title = `${group.title} งวดวันที่ ${formatSeoDate(date, lang)}`
-  const description = `${group.description} สำหรับงวดวันที่ ${formatSeoDate(date, lang)}`
+  const title = drawDateTitle(localizedLotteryGroupTitle(groupCode, lang), date, lang)
+  const description = drawDateDescription(localizedLotteryGroupDescription(groupCode, lang), date, lang)
   return {
     title,
     description,
@@ -63,6 +80,7 @@ export default async function LangLotteryGroupDatePage({ params }: PageProps) {
   const currentLang = lang as Lang
   const groupMeta = getLotteryGroup(groupCode)
   if (!groupMeta) notFound()
+  const groupName = lotteryGroupName(groupCode, currentLang)
 
   const t = DICT[currentLang]
   let initialData: LotteryByDateResponse | null = null
@@ -84,10 +102,10 @@ export default async function LangLotteryGroupDatePage({ params }: PageProps) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `${lotteryGroupTitle(groupCode)} งวดวันที่ ${formatSeoDate(date, currentLang)}`,
+    name: drawDateTitle(localizedLotteryGroupTitle(groupCode, currentLang), date, currentLang),
     url: absoluteUrl(localizedPath(groupDatePath(groupCode, date), currentLang)),
     inLanguage: LANG_LOCALE[currentLang],
-    description: `${lotteryGroupDescription(groupCode)} สำหรับงวดวันที่ ${formatSeoDate(date, currentLang)}`,
+    description: drawDateDescription(localizedLotteryGroupDescription(groupCode, currentLang), date, currentLang),
     isPartOf: { '@type': 'WebSite', name: siteName, url: absoluteUrl('/'), alternateName: 'ตรวจหวย' },
     mainEntity: {
       '@type': 'ItemList',
@@ -108,19 +126,19 @@ export default async function LangLotteryGroupDatePage({ params }: PageProps) {
     },
   }
   const breadcrumbLd = breadcrumbJsonLd([
-    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
-    { name: groupMeta.name, item: localizedPath(`/lottery/group/${groupCode}`, currentLang) },
+    { name: t.home, item: localizedPath('/', currentLang) },
+    { name: groupName, item: localizedPath(`/lottery/group/${groupCode}`, currentLang) },
     { name: formatSeoDate(date, currentLang), item: localizedPath(groupDatePath(groupCode, date), currentLang) },
   ])
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(currentLang)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Breadcrumbs items={[
-        { href: localizedPath('/', currentLang), label: 'หน้าแรก' },
-        { href: localizedPath(`/lottery/group/${groupCode}`, currentLang), label: groupMeta.name },
+        { href: localizedPath('/', currentLang), label: t.home },
+        { href: localizedPath(`/lottery/group/${groupCode}`, currentLang), label: groupName },
         { label: formatSeoDate(date, currentLang) },
       ]} />
       <LotteryApp
@@ -128,7 +146,7 @@ export default async function LangLotteryGroupDatePage({ params }: PageProps) {
         initialDate={date}
         initialLang={currentLang}
         groupCode={groupCode}
-        groupName={groupMeta.name}
+        groupName={groupName}
         langPrefix={`/${currentLang}`}
       />
       <LotterySeoContent currentDate={date} lang={currentLang} markets={allMarkets} />

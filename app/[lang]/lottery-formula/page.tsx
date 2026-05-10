@@ -210,6 +210,47 @@ const FORMULA_COPY: Record<Lang, FormulaCopy> = {
       },
     ],
   },
+  zh: {
+    home: '首页',
+    metaTitle: '彩票公式 | Huay Update',
+    metaDescription: '用于整理历史结果号码想法的简单彩票公式，适合个人记录和统计比较。',
+    kicker: '号码笔记',
+    title: '彩票公式',
+    lead: '从历史结果整理号码组合的方法，用于个人记录和统计比较，不保证中奖结果。',
+    back: '返回开奖结果',
+    noteTitle: '提醒',
+    note: '彩票结果属于随机事件。这些公式仅用于整理想法和娱乐。',
+    formulas: [
+      {
+        title: '反转号码',
+        steps: ['选择最新一期的 2 位或 3 位号码', '交换数字位置生成新的组合', '只保留未与原记录重复的组合'],
+        exampleLabel: '示例',
+        example: '68 -> 86, 368 -> 386 / 638 / 863',
+        tone: 'gold',
+      },
+      {
+        title: '和值点数',
+        steps: ['将每一位数字相加', '取和值的个位数作为点数', '将点数与原数字搭配成组合'],
+        exampleLabel: '示例',
+        example: '6 + 8 = 14 -> 点数 4 -> 64 / 84 / 44',
+        tone: 'blue',
+      },
+      {
+        title: '前进后退',
+        steps: ['将每一位数字加 1 或减 1', '保留仍在 0-9 范围内的组合', '与之前记录的重点号码进行比较'],
+        exampleLabel: '示例',
+        example: '68 -> 57 / 67 / 69 / 79',
+        tone: 'green',
+      },
+      {
+        title: '重点号码匹配',
+        steps: ['从最近 3-5 期中选择重点数字', '统计每个数字出现频率', '将重复出现的数字与其他公式进行搭配筛选'],
+        exampleLabel: '示例',
+        example: '重点 4, 8 -> 点数 4 -> 48 / 84 / 44',
+        tone: 'purple',
+      },
+    ],
+  },
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

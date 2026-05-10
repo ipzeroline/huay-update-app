@@ -44,12 +44,28 @@ function historyPagePath(id: string, lang: Lang, page: number) {
 }
 
 function resultSummary(result: MarketResult | null, lang: Lang) {
-  if (!result?.result_number || result.result_number.no_result) return lang === 'en' ? 'No result yet' : 'ยังไม่มีผล'
+  const t = DICT[lang]
+  if (!result?.result_number || result.result_number.no_result) return t.notYet
   const top3 = result.result_top_3 || result.result_number.top_3 || '-'
   const top2 = result.result_top_2 || result.result_number.top_2 || '-'
   const bottom2 = result.result_bottom_2 || result.result_number.bottom_2 || '-'
-  if (lang === 'en') return `3 Top ${top3} · 2 Top ${top2} · 2 Bottom ${bottom2}`
-  return `3 ตัวบน ${top3} · 2 ตัวบน ${top2} · 2 ตัวล่าง ${bottom2}`
+  return `${t.top3} ${top3} · ${t.top2} ${top2} · ${t.bottom2} ${bottom2}`
+}
+
+function marketHistoryTitle(marketName: string, lang: Lang) {
+  if (lang === 'en') return `${marketName} latest results and history`
+  if (lang === 'la') return `ຜົນ${marketName}ລ່າສຸດ ແລະຍ້ອນຫຼັງ`
+  if (lang === 'kh') return `លទ្ធផល${marketName}ថ្មី និងប្រវត្តិ`
+  if (lang === 'zh') return `${marketName}最新结果和历史记录`
+  return `ผล${marketName}ล่าสุดและย้อนหลัง`
+}
+
+function marketHistoryDescription(marketName: string, groupName: string | undefined, lang: Lang) {
+  if (lang === 'en') return `Check latest ${marketName} lottery results and history${groupName ? ` from ${groupName}` : ''}.`
+  if (lang === 'la') return `ກວດຜົນ${marketName}ລ່າສຸດ ແລະຜົນຍ້ອນຫຼັງ${groupName ? `ຂອງ ${groupName}` : ''}`
+  if (lang === 'kh') return `ពិនិត្យលទ្ធផល${marketName}ថ្មី និងប្រវត្តិ${groupName ? `របស់ ${groupName}` : ''}`
+  if (lang === 'zh') return `查看${marketName}最新彩票结果和历史记录${groupName ? `，分类：${groupName}` : ''}。`
+  return `ตรวจผล${marketName}ล่าสุด พร้อมผลย้อนหลัง${groupName ? `ของ ${groupName}` : ''}`
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -64,10 +80,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       return { title: 'Not found', robots: { index: false, follow: false } }
     }
 
-    const title = lang === 'en' ? `${market.name} latest results and history` : `ผล${market.name}ล่าสุดและย้อนหลัง`
-    const description = lang === 'en'
-      ? `Check latest ${market.name} lottery results and history.`
-      : `ตรวจผล${market.name}ล่าสุด พร้อมผลย้อนหลัง รายละเอียดเลข 3 ตัวบน 2 ตัวบน และ 2 ตัวล่าง`
+    const title = marketHistoryTitle(market.name, lang)
+    const description = marketHistoryDescription(market.name, undefined, lang)
     const path = localizedPath(marketPath(id), lang)
 
     return {
@@ -80,7 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       robots: { index: true, follow: true },
     }
   } catch {
-    return { title: 'ผลหวยย้อนหลัง', description: 'ตรวจผลหวยล่าสุดและย้อนหลัง', robots: { index: true, follow: true } }
+    return { title: lang === 'zh' ? '彩票历史结果' : 'ผลหวยย้อนหลัง', description: lang === 'zh' ? '查看最新彩票结果和历史记录' : 'ตรวจผลหวยล่าสุดและย้อนหลัง', robots: { index: true, follow: true } }
   }
 }
 
@@ -107,10 +121,8 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
     ? (Math.max(1, pagination.page) - 1) * pagination.limit
     : (historyPage - 1) * HISTORY_PAGE_SIZE
   const t = DICT[currentLang]
-  const title = currentLang === 'en' ? `${market.name} latest results and history` : `ผล${market.name}ล่าสุดและย้อนหลัง`
-  const description = currentLang === 'en'
-    ? `Check latest ${market.name} lottery results and history from ${market.group_name}.`
-    : `ตรวจผล${market.name}ล่าสุด พร้อมผลย้อนหลังของ ${market.group_name}`
+  const title = marketHistoryTitle(market.name, currentLang)
+  const description = marketHistoryDescription(market.name, market.group_name, currentLang)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -132,7 +144,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
     },
   }
   const breadcrumbLd = breadcrumbJsonLd([
-    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
+    { name: t.home, item: localizedPath('/', currentLang) },
     { name: market.group_name },
     { name: market.name, item: localizedPath(marketPath(id), currentLang) },
   ])
@@ -140,11 +152,11 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(currentLang)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <div className="breadcrumbs-row">
         <Breadcrumbs items={[
-          { href: localizedPath('/', currentLang), label: 'หน้าแรก' },
+          { href: localizedPath('/', currentLang), label: t.home },
           { label: market.group_name },
           { label: market.name },
         ]} />

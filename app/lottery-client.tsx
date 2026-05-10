@@ -70,16 +70,17 @@ const GROUP_META: Record<string, { icon: React.ReactNode; color: string; highlig
 const FALLBACK_META = { icon: <LayoutGrid size={13} />, color: '#d4af37', highlight: '#f5d060', cls: 'gt-thai' }
 const metaFor = (code: string) => GROUP_META[code] ?? FALLBACK_META
 const GROUP_NAV = [
-  { code: 'lotto-thai', label: 'หวยไทย' },
-  { code: 'lotto-foreign', label: 'หวยต่างประเทศ' },
-  { code: 'lotto-stock', label: 'หวยหุ้น' },
-  { code: 'lotto-daily', label: 'หวยรายวัน' },
+  { code: 'lotto-thai', labelKey: 'lotteryThai' },
+  { code: 'lotto-foreign', labelKey: 'lotteryForeign' },
+  { code: 'lotto-stock', labelKey: 'lotteryStock' },
+  { code: 'lotto-daily', labelKey: 'lotteryDaily' },
 ]
 const MENU_TOPIC_TITLE: Record<Lang, string> = {
   th: 'ข้อมูลหวย',
   en: 'Lottery guides',
   la: 'ຂໍ້ມູນຫວຍ',
   kh: 'ព័ត៌មានឆ្នោត',
+  zh: '彩票指南',
 }
 const PAGE_HEADING: Record<Lang, { all: string; group: (name: string) => string }> = {
   th: {
@@ -97,6 +98,10 @@ const PAGE_HEADING: Record<Lang, { all: string; group: (name: string) => string 
   kh: {
     all: 'លទ្ធផលឆ្នោតថ្ងៃនេះ គ្រប់ប្រភេទ',
     group: name => `លទ្ធផល${name}ថ្ងៃនេះ`,
+  },
+  zh: {
+    all: '今日各类彩票开奖结果',
+    group: name => `今日${name}结果`,
   },
 }
 
@@ -144,6 +149,12 @@ const DATE_LABELS: Record<Lang, { monthsShort: string[]; monthsLong: string[]; w
     weekdays: ['ថ្ងៃអាទិត្យ', 'ថ្ងៃចន្ទ', 'ថ្ងៃអង្គារ', 'ថ្ងៃពុធ', 'ថ្ងៃព្រហស្បតិ៍', 'ថ្ងៃសុក្រ', 'ថ្ងៃសៅរ៍'],
     weekdaysShort: ['អា', 'ច', 'អ', 'ពុ', 'ព្រ', 'សុ', 'សៅ'],
   },
+  zh: {
+    monthsShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+    monthsLong: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+    weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+    weekdaysShort: ['日', '一', '二', '三', '四', '五', '六'],
+  },
 }
 
 /* ─── Helpers ─── */
@@ -168,6 +179,7 @@ function shortDate(s: string, lang: Lang) {
   const labels = DATE_LABELS[lang]
   const displayYear = labels.buddhistYear ? year + 543 : year
   const shortYear = String(displayYear).slice(-2)
+  if (lang === 'zh') return `${month + 1}月${day}日`
   return lang === 'en'
     ? `${labels.monthsShort[month]} ${day}, ${shortYear}`
     : `${day} ${labels.monthsShort[month]} ${shortYear}`
@@ -178,6 +190,7 @@ function fullDate(s: string, lang: Lang) {
   const displayYear = labels.buddhistYear ? year + 543 : year
   if (lang === 'en') return `${labels.weekdays[date.getDay()]}, ${labels.monthsLong[month]} ${day}, ${displayYear}`
   if (lang === 'th') return `${labels.weekdays[date.getDay()]}ที่ ${day} ${labels.monthsLong[month]} ${displayYear}`
+  if (lang === 'zh') return `${displayYear}年${month + 1}月${day}日 ${labels.weekdays[date.getDay()]}`
   return `${labels.weekdays[date.getDay()]} ${day} ${labels.monthsLong[month]} ${displayYear}`
 }
 function fmtTime(s: string | null, lang: Lang) {
@@ -411,14 +424,14 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
                     style={isActive ? { color: m.color } : {}}
                   >
                     <span style={{ color: isActive ? m.color : undefined }}>{m.icon}</span>
-                    {g.label}
-                  </Link>
+                {t[g.labelKey as keyof Pick<Dict, 'lotteryThai' | 'lotteryForeign' | 'lotteryStock' | 'lotteryDaily'>]}
+              </Link>
                 )
               })}
             </div>
 
             <div className="date-group">
-              <Link className="date-nav-btn" href={dateHref(previousDate)} aria-label="ดูผลหวยวันก่อนหน้า">
+              <Link className="date-nav-btn" href={dateHref(previousDate)} aria-label={t.previousDayResults}>
                 <ChevronLeft size={14} />
               </Link>
               <button type="button" onClick={openCalendar} className="date-pill">
@@ -428,11 +441,11 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
                 <span>{dateDisplay}</span>
               </button>
               {isToday ? (
-                <button className="date-nav-btn" disabled aria-label="ยังไม่มีผลหวยวันถัดไป">
+                <button className="date-nav-btn" disabled aria-label={t.noNextDayResults}>
                   <ChevronRight size={14} />
                 </button>
               ) : (
-                <Link className="date-nav-btn" href={dateHref(nextDate)} aria-label="ดูผลหวยวันถัดไป">
+                <Link className="date-nav-btn" href={dateHref(nextDate)} aria-label={t.nextDayResults}>
                   <ChevronRight size={14} />
                 </Link>
               )}
@@ -446,7 +459,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
           <aside className="menu-drawer" onClick={e => e.stopPropagation()}>
             <div className="menu-drawer-head">
               <span>{t.menu}</span>
-              <button type="button" className="icon-btn" onClick={() => setMenuOpen(false)} aria-label="ปิด">
+              <button type="button" className="icon-btn" onClick={() => setMenuOpen(false)} aria-label={t.close}>
                 <X size={16} />
               </button>
             </div>
@@ -521,7 +534,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
                     className={`calendar-day ${cell === date ? 'active' : ''}`}
                     href={dateHref(cell)}
                     onClick={closeCalendar}
-                    aria-label={`ดูผลหวยวันที่ ${fullDate(cell, lang)}`}
+                    aria-label={t.viewDateResults.replace('{date}', fullDate(cell, lang))}
                   >
                     {new Date(cell + 'T12:00:00').getDate()}
                   </Link>
@@ -599,10 +612,10 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
           <div style={{ padding: '64px 24px', textAlign: 'center', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18 }}>
             <div style={{ fontSize: '3rem', marginBottom: 12 }}>🔍</div>
             <p className="font-th" style={{ fontSize: '1.05rem', color: 'var(--text-2)' }}>
-              {groupCode ? `ไม่พบผล${groupName ?? 'หวยกลุ่มนี้'}ในงวดนี้` : t.notFound}
+              {groupCode ? t.noGroupResult.replace('{group}', groupName ?? t.lotteryGroupFallback) : t.notFound}
             </p>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-3)', marginTop: 6 }}>
-              {groupCode ? 'ลองเลือกงวดก่อนหน้า หรือเปลี่ยนวันที่จากปฏิทินด้านบน' : t.tryOther}
+              {groupCode ? t.tryPreviousDraw : t.tryOther}
             </p>
           </div>
         )}
@@ -668,7 +681,7 @@ function LangSwitcher({ lang, onChange }: { lang: Lang; onChange: (l: Lang) => v
   const wrapRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const languageHref = useCallback((nextLang: Lang) => {
-    const pathWithoutLang = pathname.replace(/^\/(th|en|la|kh)(?=\/|$)/, '') || '/'
+    const pathWithoutLang = pathname.replace(/^\/(th|en|la|kh|zh)(?=\/|$)/, '') || '/'
     const prefix = `/${nextLang}`
     if (
       /^\/lottery\/\d{4}-\d{2}-\d{2}$/.test(pathWithoutLang) ||
@@ -824,8 +837,8 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
   return (
     <Link
       href={historyHref}
-      aria-label={`ดูผลย้อนหลัง ${market.market_name}`}
-      title="ดูผลย้อนหลัง"
+      aria-label={`${t.viewHistory} ${market.market_name}`}
+      title={t.viewHistory}
       style={{
         background: hasResult
           ? `linear-gradient(135deg, ${accentColor}0e 0%, rgba(8,8,16,0.95) 70%)`

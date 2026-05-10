@@ -83,7 +83,7 @@ export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; 
     },
   }
   const breadcrumbLd = breadcrumbJsonLd([
-    { name: 'หน้าแรก', item: canonical },
+    { name: t.home, item: canonical },
   ])
 
   return (
@@ -94,7 +94,7 @@ export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; 
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(lang)) }}
       />
       <script
         type="application/ld+json"

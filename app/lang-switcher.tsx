@@ -20,7 +20,7 @@ export default function LangSwitcher({ lang, onChange }: { lang: Lang; onChange?
     setCoords({ top: rect.bottom + 6, right: window.innerWidth - rect.right })
   }, [open])
   const languageHref = useCallback((nextLang: Lang) => {
-    const pathWithoutLang = pathname.replace(/^\/(th|en|la|kh)(?=\/|$)/, '') || '/'
+    const pathWithoutLang = pathname.replace(/^\/(th|en|la|kh|zh)(?=\/|$)/, '') || '/'
     const prefix = `/${nextLang}`
     if (
       /^\/lottery\/\d{4}-\d{2}-\d{2}$/.test(pathWithoutLang) ||

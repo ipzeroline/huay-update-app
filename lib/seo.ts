@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { getSiteUrl } from '@/lib/site-url'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 
-export const seoLangs: Lang[] = ['th', 'en', 'la', 'kh']
+export const seoLangs: Lang[] = ['th', 'en', 'la', 'kh', 'zh']
 export const siteName = 'Huay Update'
 export const siteTitle = 'ตรวจหวย Huay Update | ผลหวยไทย ต่างประเทศ หุ้น รายวัน ล่าสุดวันนี้'
 export const siteDescription = 'ตรวจผลหวยวันนี้ ครบทุกประเภท หวยไทย หวยลาว หวยหุ้น ฮานอย อัปเดตรวดเร็ว ดูย้อนหลังได้ทันที ที่ huayupdate.live'
@@ -103,6 +103,7 @@ export function lotteryPageTitle(date: string, lang: Lang = 'th'): string {
   if (lang === 'en') return `Lottery results for ${formatSeoDate(date, lang)}`
   if (lang === 'la') return `ຜົນຫວຍວັນທີ ${formatSeoDate(date, lang)}`
   if (lang === 'kh') return `លទ្ធផលឆ្នោតថ្ងៃទី ${formatSeoDate(date, lang)}`
+  if (lang === 'zh') return `${formatSeoDate(date, lang)} 彩票开奖结果`
   return `ผลหวยวันนี้ ${formatThaiShortSeoDate(date)} ครบทุกประเภท | ${siteName}`
 }
 
@@ -110,6 +111,7 @@ export function lotteryPageDescription(date: string, lang: Lang = 'th'): string 
   if (lang === 'en') return `Check lottery results for ${formatSeoDate(date, lang)}, including Thai lottery, foreign lottery, stock lottery, daily lottery, 3 top, 2 top, and 2 bottom results.`
   if (lang === 'la') return `ກວດຜົນຫວຍວັນທີ ${formatSeoDate(date, lang)} ລວມຫວຍໄທ ຫວຍຕ່າງປະເທດ ຫວຍຫຸ້ນ ແລະຫວຍລາຍວັນ`
   if (lang === 'kh') return `ពិនិត្យលទ្ធផលឆ្នោតថ្ងៃទី ${formatSeoDate(date, lang)} រួមមានឆ្នោតថៃ ឆ្នោតបរទេស ឆ្នោតហ៊ុន និងឆ្នោតប្រចាំថ្ងៃ`
+  if (lang === 'zh') return `查看 ${formatSeoDate(date, lang)} 彩票开奖结果，包括泰国彩票、国外彩票、股票彩票、每日彩票、前三位、前两位和后两位结果。`
   return siteDescription
 }
 
@@ -118,6 +120,60 @@ export function lotteryGroupTitle(code: string): string {
 }
 
 export function lotteryGroupDescription(code: string): string {
+  return getLotteryGroup(code)?.description ?? siteDescription
+}
+
+export function lotteryGroupName(code: string, lang: Lang = 'th'): string {
+  const labels: Record<Lang, Record<string, string>> = {
+    th: {
+      'lotto-thai': 'หวยไทย',
+      'lotto-foreign': 'หวยต่างประเทศ',
+      'lotto-stock': 'หวยหุ้น',
+      'lotto-daily': 'หวยรายวัน',
+    },
+    en: {
+      'lotto-thai': 'Thai Lottery',
+      'lotto-foreign': 'Foreign Lottery',
+      'lotto-stock': 'Stock Lottery',
+      'lotto-daily': 'Daily Lottery',
+    },
+    la: {
+      'lotto-thai': 'ຫວຍໄທ',
+      'lotto-foreign': 'ຫວຍຕ່າງປະເທດ',
+      'lotto-stock': 'ຫວຍຫຸ້ນ',
+      'lotto-daily': 'ຫວຍລາຍວັນ',
+    },
+    kh: {
+      'lotto-thai': 'ឆ្នោតថៃ',
+      'lotto-foreign': 'ឆ្នោតបរទេស',
+      'lotto-stock': 'ឆ្នោតហ៊ុន',
+      'lotto-daily': 'ឆ្នោតប្រចាំថ្ងៃ',
+    },
+    zh: {
+      'lotto-thai': '泰国彩票',
+      'lotto-foreign': '国外彩票',
+      'lotto-stock': '股票彩票',
+      'lotto-daily': '每日彩票',
+    },
+  }
+  return labels[lang][code] ?? getLotteryGroup(code)?.name ?? code
+}
+
+export function localizedLotteryGroupTitle(code: string, lang: Lang = 'th'): string {
+  const name = lotteryGroupName(code, lang)
+  if (lang === 'en') return `Latest ${name} Results`
+  if (lang === 'la') return `ຜົນ${name}ລ່າສຸດ`
+  if (lang === 'kh') return `លទ្ធផល${name}ថ្មីបំផុត`
+  if (lang === 'zh') return `最新${name}结果`
+  return getLotteryGroup(code)?.title ?? 'ผลหวยล่าสุด'
+}
+
+export function localizedLotteryGroupDescription(code: string, lang: Lang = 'th'): string {
+  const name = lotteryGroupName(code, lang)
+  if (lang === 'en') return `Check latest ${name} results and history by date, with important lottery numbers in one place.`
+  if (lang === 'la') return `ກວດຜົນ${name}ລ່າສຸດ ແລະຜົນຍ້ອນຫຼັງຕາມວັນທີ ພ້ອມເລກສໍາຄັນໃນໜ້າດຽວ.`
+  if (lang === 'kh') return `ពិនិត្យលទ្ធផល${name}ថ្មី និងប្រវត្តិតាមថ្ងៃ ជាមួយលេខសំខាន់ៗនៅកន្លែងតែមួយ។`
+  if (lang === 'zh') return `按日期查看最新${name}结果和历史记录，在一个页面查看重要号码。`
   return getLotteryGroup(code)?.description ?? siteDescription
 }
 

@@ -5,17 +5,80 @@ import type { Lang } from '@/lib/i18n'
 import { formatSeoDate, localizedPath, lotteryGroups } from '@/lib/seo'
 import { getLotterySeoPage, lotterySeoPages, type LotterySeoSlug } from '@/lib/lottery-seo-pages'
 
+const topicCopy: Record<Lang, {
+  home: string
+  todayResults: string
+  allResults: string
+  relatedLinks: string
+  relatedCategories: string
+  morePages: string
+  faq: string
+  groupLabels: Record<string, string>
+}> = {
+  th: {
+    home: 'หน้าแรก',
+    todayResults: 'ตรวจผลหวยวันนี้',
+    allResults: 'ผลหวยทั้งหมด',
+    relatedLinks: 'ลิงก์ผลหวยที่เกี่ยวข้อง',
+    relatedCategories: 'ประเภทหวยที่เกี่ยวข้อง',
+    morePages: 'หน้าข้อมูลหวยเพิ่มเติม',
+    faq: 'คำถามที่พบบ่อย',
+    groupLabels: { 'lotto-thai': 'หวยไทย', 'lotto-foreign': 'หวยต่างประเทศ', 'lotto-stock': 'หวยหุ้น', 'lotto-daily': 'หวยรายวัน' },
+  },
+  en: {
+    home: 'Home',
+    todayResults: 'Check today results',
+    allResults: 'All lottery results',
+    relatedLinks: 'Related lottery links',
+    relatedCategories: 'Related categories',
+    morePages: 'More SEO pages',
+    faq: 'Frequently Asked Questions',
+    groupLabels: { 'lotto-thai': 'Thai Lottery', 'lotto-foreign': 'Foreign Lottery', 'lotto-stock': 'Stock Lottery', 'lotto-daily': 'Daily Lottery' },
+  },
+  la: {
+    home: 'ໜ້າຫຼັກ',
+    todayResults: 'ກວດຜົນຫວຍມື້ນີ້',
+    allResults: 'ຜົນຫວຍທັງໝົດ',
+    relatedLinks: 'ລິ້ງຜົນຫວຍທີ່ກ່ຽວຂ້ອງ',
+    relatedCategories: 'ປະເພດຫວຍທີ່ກ່ຽວຂ້ອງ',
+    morePages: 'ໜ້າຂໍ້ມູນຫວຍເພີ່ມເຕີມ',
+    faq: 'ຄໍາຖາມທີ່ພົບເລື້ອຍ',
+    groupLabels: { 'lotto-thai': 'ຫວຍໄທ', 'lotto-foreign': 'ຫວຍຕ່າງປະເທດ', 'lotto-stock': 'ຫວຍຫຸ້ນ', 'lotto-daily': 'ຫວຍລາຍວັນ' },
+  },
+  kh: {
+    home: 'ទំព័រដើម',
+    todayResults: 'ពិនិត្យលទ្ធផលថ្ងៃនេះ',
+    allResults: 'លទ្ធផលឆ្នោតទាំងអស់',
+    relatedLinks: 'តំណលទ្ធផលឆ្នោតពាក់ព័ន្ធ',
+    relatedCategories: 'ប្រភេទពាក់ព័ន្ធ',
+    morePages: 'ទំព័រព័ត៌មានបន្ថែម',
+    faq: 'សំណួរដែលសួរញឹកញាប់',
+    groupLabels: { 'lotto-thai': 'ឆ្នោតថៃ', 'lotto-foreign': 'ឆ្នោតបរទេស', 'lotto-stock': 'ឆ្នោតហ៊ុន', 'lotto-daily': 'ឆ្នោតប្រចាំថ្ងៃ' },
+  },
+  zh: {
+    home: '首页',
+    todayResults: '查看今日结果',
+    allResults: '全部彩票结果',
+    relatedLinks: '相关彩票链接',
+    relatedCategories: '相关分类',
+    morePages: '更多彩票信息页',
+    faq: '常见问题',
+    groupLabels: { 'lotto-thai': '泰国彩票', 'lotto-foreign': '国外彩票', 'lotto-stock': '股票彩票', 'lotto-daily': '每日彩票' },
+  },
+}
+
 export default function LotteryTopicPage({ lang, slug }: { lang: Lang; slug: LotterySeoSlug }) {
   const page = getLotterySeoPage(slug, lang)
   if (!page) return null
 
   const today = todayBangkok()
+  const copy = topicCopy[lang]
   const siblingPages = Object.keys(lotterySeoPages).filter(item => item !== slug)
 
   return (
     <main className="lottery-topic-page">
       <Breadcrumbs items={[
-        { href: localizedPath('/', lang), label: lang === 'en' ? 'Home' : 'หน้าแรก' },
+        { href: localizedPath('/', lang), label: copy.home },
         { label: page.h1 },
       ]} />
 
@@ -26,10 +89,10 @@ export default function LotteryTopicPage({ lang, slug }: { lang: Lang; slug: Lot
           <p>{page.intro}</p>
           <div className="lottery-topic-actions">
             <Link href={localizedPath(`/lottery/${today}`, lang)}>
-              {lang === 'en' ? 'Check today results' : 'ตรวจผลหวยวันนี้'}
+              {copy.todayResults}
             </Link>
             <Link href={localizedPath('/', lang)}>
-              {lang === 'en' ? 'All lottery results' : 'ผลหวยทั้งหมด'}
+              {copy.allResults}
             </Link>
           </div>
         </div>
@@ -48,19 +111,19 @@ export default function LotteryTopicPage({ lang, slug }: { lang: Lang; slug: Lot
         ))}
       </section>
 
-      <section className="lottery-topic-links" aria-label="ลิงก์ผลหวยที่เกี่ยวข้อง">
+      <section className="lottery-topic-links" aria-label={copy.relatedLinks}>
         <div>
-          <h2>{lang === 'en' ? 'Related categories' : 'ประเภทหวยที่เกี่ยวข้อง'}</h2>
+          <h2>{copy.relatedCategories}</h2>
           <div>
             {lotteryGroups.map(group => (
               <Link key={group.code} href={localizedPath(`/lottery/group/${group.code}`, lang)}>
-                {group.name}
+                {copy.groupLabels[group.code] ?? group.name}
               </Link>
             ))}
           </div>
         </div>
         <div>
-          <h2>{lang === 'en' ? 'More SEO pages' : 'หน้าข้อมูลหวยเพิ่มเติม'}</h2>
+          <h2>{copy.morePages}</h2>
           <div>
             {siblingPages.map(item => {
               const sibling = getLotterySeoPage(item, lang)
@@ -75,7 +138,7 @@ export default function LotteryTopicPage({ lang, slug }: { lang: Lang; slug: Lot
       </section>
 
       <section className="lottery-topic-faq">
-        <h2>{lang === 'en' ? 'Frequently Asked Questions' : 'คำถามที่พบบ่อย'}</h2>
+        <h2>{copy.faq}</h2>
         <div>
           {page.faq.map(item => (
             <article key={item.question}>

@@ -92,7 +92,7 @@ export function MarketDetailPanel({
     >
       <div className="market-detail-head">
         {backHref && (
-          <Link href={backHref} className="market-detail-back" aria-label="กลับหน้าแรก">
+          <Link href={backHref} className="market-detail-back" aria-label={t.home}>
             <ChevronLeft size={16} />
           </Link>
         )}
@@ -105,7 +105,7 @@ export function MarketDetailPanel({
           <p>{m?.group_name ?? ''}</p>
         </div>
         {onClose && (
-          <button onClick={onClose} className="market-detail-close" aria-label="ปิด">
+          <button onClick={onClose} className="market-detail-close" aria-label={t.close}>
             <X size={14} />
           </button>
         )}

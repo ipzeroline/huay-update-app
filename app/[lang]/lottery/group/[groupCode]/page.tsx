@@ -13,9 +13,10 @@ import {
   getLotteryGroup,
   isSeoLang,
   languageAlternates,
+  localizedLotteryGroupDescription,
+  localizedLotteryGroupTitle,
+  lotteryGroupName,
   localizedPath,
-  lotteryGroupDescription,
-  lotteryGroupTitle,
   siteKeywords,
   siteName,
 } from '@/lib/seo'
@@ -38,13 +39,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const path = localizedPath(groupPath(groupCode), lang)
+  const title = localizedLotteryGroupTitle(groupCode, lang)
+  const description = localizedLotteryGroupDescription(groupCode, lang)
   return {
-    title: group.title,
-    description: group.description,
+    title,
+    description,
     keywords: [...siteKeywords, ...group.keywords],
     alternates: { canonical: path, languages: languageAlternates(groupPath(groupCode)) },
-    openGraph: baseOpenGraph(path, group.title, group.description),
-    twitter: baseTwitter(group.title, group.description),
+    openGraph: baseOpenGraph(path, title, description),
+    twitter: baseTwitter(title, description),
     robots: { index: true, follow: true },
   }
 }
@@ -55,6 +58,7 @@ export default async function LangLotteryGroupPage({ params }: PageProps) {
   const currentLang = lang as Lang
   const groupMeta = getLotteryGroup(groupCode)
   if (!groupMeta) notFound()
+  const groupName = lotteryGroupName(groupCode, currentLang)
 
   const t = DICT[currentLang]
   const date = todayBangkok()
@@ -77,10 +81,10 @@ export default async function LangLotteryGroupPage({ params }: PageProps) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: lotteryGroupTitle(groupCode),
+    name: localizedLotteryGroupTitle(groupCode, currentLang),
     url: absoluteUrl(localizedPath(groupPath(groupCode), currentLang)),
     inLanguage: LANG_LOCALE[currentLang],
-    description: lotteryGroupDescription(groupCode),
+    description: localizedLotteryGroupDescription(groupCode, currentLang),
     isPartOf: { '@type': 'WebSite', name: siteName, url: absoluteUrl('/'), alternateName: 'ตรวจหวย' },
     mainEntity: {
       '@type': 'ItemList',
@@ -101,25 +105,25 @@ export default async function LangLotteryGroupPage({ params }: PageProps) {
     },
   }
   const breadcrumbLd = breadcrumbJsonLd([
-    { name: 'หน้าแรก', item: localizedPath('/', currentLang) },
-    { name: groupMeta.name, item: localizedPath(groupPath(groupCode), currentLang) },
+    { name: t.home, item: localizedPath('/', currentLang) },
+    { name: groupName, item: localizedPath(groupPath(groupCode), currentLang) },
   ])
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(currentLang)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Breadcrumbs items={[
-        { href: localizedPath('/', currentLang), label: 'หน้าแรก' },
-        { label: groupMeta.name },
+        { href: localizedPath('/', currentLang), label: t.home },
+        { label: groupName },
       ]} />
       <LotteryApp
         initialData={initialData}
         initialDate={date}
         initialLang={currentLang}
         groupCode={groupCode}
-        groupName={groupMeta.name}
+        groupName={groupName}
         langPrefix={`/${currentLang}`}
       />
       <LotterySeoContent currentDate={date} lang={currentLang} markets={allMarkets} />

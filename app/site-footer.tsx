@@ -99,6 +99,26 @@ const footerCopy: Record<Lang, {
       'lotto-daily': 'ឆ្នោតប្រចាំថ្ងៃ',
     },
   },
+  zh: {
+    description: '查看今日各类彩票开奖结果，包括泰国彩票、老挝彩票、股票彩票、河内彩票和每日市场，更新快速并支持历史记录。',
+    note: '彩票结果数据仅供查询和参考，请再次以官方开奖来源为准。',
+    lotteryTypes: '彩票分类',
+    siteInfo: '网站信息',
+    contact: '联系团队',
+    team: 'Huay Update 团队',
+    email: '电子邮件',
+    policyLinks: [
+      { href: '/zh', label: '首页' },
+      { href: '/zh/lottery-formula', label: '彩票公式' },
+      { href: '/sitemap.xml', label: 'Sitemap' },
+    ],
+    groupLabels: {
+      'lotto-thai': '泰国彩票',
+      'lotto-foreign': '国外彩票',
+      'lotto-stock': '股票彩票',
+      'lotto-daily': '每日彩票',
+    },
+  },
 }
 
 function langFromPath(pathname: string | null): Lang {
