@@ -448,6 +448,50 @@ body::before {
 .lottery-topic-faq h3 {
   font-size: 0.98rem;
 }
+.guide-page .lottery-topic-hero aside p {
+  margin-top: 8px;
+  color: var(--text-3);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.guide-category-links {
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+}
+.guide-category-links > div:last-child > div {
+  max-height: 280px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.guide-muted {
+  color: var(--text-3);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+.guide-group-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 14px;
+}
+.guide-group-grid .lottery-topic-card a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  margin-top: 12px;
+  padding: 7px 11px;
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 8px;
+  background: rgba(212,175,55,0.08);
+  color: var(--gold-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.guide-group-grid .lottery-topic-card a:hover {
+  border-color: rgba(212,175,55,0.42);
+  background: rgba(212,175,55,0.13);
+}
+.guide-section-grid {
+  margin-top: 14px;
+}
 
 .market-detail-lang {
   display: flex;
