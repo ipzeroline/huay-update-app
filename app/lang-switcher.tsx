@@ -27,6 +27,7 @@ export default function LangSwitcher({ lang, onChange }: { lang: Lang; onChange?
       /^\/lottery\/group\/[^/]+(?:\/\d{4}-\d{2}-\d{2})?$/.test(pathWithoutLang) ||
       /^\/market\/[^/]+$/.test(pathWithoutLang) ||
       pathWithoutLang === '/guide' ||
+      pathWithoutLang === '/lucky-numbers' ||
       pathWithoutLang === '/lottery-formula'
     ) {
       return `${prefix}${pathWithoutLang}`

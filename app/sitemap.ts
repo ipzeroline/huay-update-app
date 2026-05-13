@@ -57,6 +57,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'weekly' as const,
     priority: lang === 'th' ? 0.8 : 0.66,
   }))
+  const luckyNumberUrls = seoLangs.map(lang => ({
+    url: `${siteUrl}${localizedPath('/lucky-numbers', lang)}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: lang === 'th' ? 0.78 : 0.64,
+  }))
   const topicUrls = seoLangs.flatMap(lang => Object.keys(lotterySeoPages).map(slug => ({
     url: `${siteUrl}${localizedPath(`/lottery/${slug}`, lang)}`,
     lastModified: new Date(),
@@ -89,6 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...languageHomeUrls,
     ...groupUrls,
     ...guideUrls,
+    ...luckyNumberUrls,
     ...formulaUrls,
     ...topicUrls,
     ...marketUrls,

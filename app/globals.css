@@ -492,6 +492,319 @@ body::before {
 .guide-section-grid {
   margin-top: 14px;
 }
+.lucky-page .lottery-topic-hero aside p {
+  margin-top: 8px;
+  color: var(--text-3);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.lucky-panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(15,15,25,0.72);
+  overflow: hidden;
+}
+.lucky-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.lucky-panel-head h2 {
+  color: var(--text);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.18rem;
+  letter-spacing: 0;
+}
+.lucky-random-button,
+.lucky-filter button,
+.lucky-history-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-family: 'Sarabun', sans-serif;
+  font-weight: 700;
+  text-decoration: none;
+}
+.lucky-random-button {
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid rgba(212,175,55,0.34);
+  background: rgba(212,175,55,0.14);
+  color: var(--gold-light);
+  cursor: pointer;
+}
+.lucky-random-button:hover {
+  background: rgba(212,175,55,0.2);
+}
+.lucky-filter {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.lucky-filter button {
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lucky-filter button.active,
+.lucky-filter button:hover {
+  border-color: rgba(212,175,55,0.38);
+  background: rgba(212,175,55,0.12);
+  color: var(--gold-light);
+}
+.lucky-table-wrap {
+  overflow-x: auto;
+}
+.lucky-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-family: 'Sarabun', sans-serif;
+}
+.lucky-table th,
+.lucky-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  vertical-align: middle;
+}
+.lucky-table thead th {
+  background: rgba(255,255,255,0.035);
+  color: var(--text-3);
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+.lucky-table tbody th {
+  color: var(--text);
+  font-weight: 700;
+  text-align: left;
+}
+.lucky-table tbody td {
+  color: var(--text-3);
+}
+.lucky-table thead th:nth-child(n+3),
+.lucky-table tbody td:nth-child(n+3):not(:last-child) {
+  text-align: center;
+}
+.lucky-table tbody tr:hover {
+  background: rgba(255,255,255,0.025);
+}
+.lucky-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 8px;
+  background: rgba(212,175,55,0.08);
+  color: var(--gold-light);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.lucky-number.top {
+  min-width: 68px;
+  color: #fff3b0;
+}
+.lucky-number.single {
+  min-width: 36px;
+}
+.lucky-history-link {
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-2);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+.lucky-history-link:hover {
+  border-color: rgba(212,175,55,0.3);
+  color: var(--gold-light);
+}
+.lucky-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-3);
+}
+.lucky-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 18px;
+}
+.lucky-group {
+  --lucky-accent: var(--gold);
+  --lucky-accent-soft: rgba(212,175,55,0.12);
+}
+.lucky-group.tone-foreign {
+  --lucky-accent: var(--blue);
+  --lucky-accent-soft: rgba(96,165,250,0.1);
+}
+.lucky-group.tone-stock {
+  --lucky-accent: var(--green);
+  --lucky-accent-soft: rgba(74,222,128,0.08);
+}
+.lucky-group.tone-daily {
+  --lucky-accent: var(--purple);
+  --lucky-accent-soft: rgba(167,139,250,0.08);
+}
+.lucky-group-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.lucky-group-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--lucky-accent) 28%, transparent);
+  border-radius: 12px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--lucky-accent) 14%, transparent), rgba(255,255,255,0.02));
+}
+.lucky-group-title span {
+  font-size: 1.18rem;
+  line-height: 1;
+}
+.lucky-group-title h3 {
+  color: var(--lucky-accent);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.lucky-group-line {
+  flex: 1;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--lucky-accent) 38%, transparent), transparent);
+}
+.lucky-group-count {
+  min-width: 38px;
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--lucky-accent) 28%, transparent);
+  border-radius: 8px;
+  background: var(--lucky-accent-soft);
+  color: var(--lucky-accent);
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+}
+.lucky-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+.lucky-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 194px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--lucky-accent) 18%, var(--border));
+  border-radius: 14px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--lucky-accent) 8%, transparent) 0%, rgba(8,8,16,0.95) 72%);
+  animation: slideUp 0.3s ease both;
+}
+.lucky-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lucky-card-head div {
+  min-width: 0;
+}
+.lucky-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.lucky-card-head span,
+.lucky-primary-number span,
+.lucky-number-grid span {
+  color: var(--text-3);
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.lucky-card-head h4 {
+  margin-top: 2px;
+  color: var(--text);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.lucky-primary-number {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--lucky-accent) 24%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--lucky-accent) 9%, transparent);
+}
+.lucky-primary-number strong {
+  color: #fff3b0;
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+.lucky-number-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.lucky-number-grid div {
+  min-height: 72px;
+  padding: 9px 6px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  text-align: center;
+}
+.lucky-number-grid strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.lucky-article-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+}
 
 .market-detail-lang {
   display: flex;
@@ -1690,6 +2003,13 @@ body::before {
   }
   .lottery-topic-hero aside {
     align-self: stretch;
+  }
+  .lucky-panel-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .lucky-random-button {
+    width: 100%;
   }
   .a2hs-button-wrap {
     left: max(12px, env(safe-area-inset-left));
