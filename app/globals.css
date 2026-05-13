@@ -1461,6 +1461,250 @@ body::before {
   margin: -4px 0 20px;
 }
 
+.market-ticker {
+  position: relative;
+  margin: -4px 0 14px;
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 12px;
+  background: rgba(15,15,26,0.74);
+  overflow: hidden;
+}
+.market-ticker::before,
+.market-ticker::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 42px;
+  pointer-events: none;
+}
+.market-ticker::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(15,15,26,0.96), transparent);
+}
+.market-ticker::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(15,15,26,0.96), transparent);
+}
+.market-ticker-track {
+  display: flex;
+  width: max-content;
+  gap: 10px;
+  padding: 8px 0;
+  animation: marketTicker 34s linear infinite;
+}
+.market-ticker:hover .market-ticker-track {
+  animation-play-state: paused;
+}
+.market-ticker span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.028);
+  color: var(--text-2);
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.market-ticker span:first-child,
+.market-ticker span:nth-child(6) {
+  color: var(--green);
+  border-color: rgba(74,222,128,0.2);
+  background: rgba(74,222,128,0.08);
+}
+@keyframes marketTicker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.ai-daily-pick {
+  --ai-pick-color: var(--gold);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(270px, 0.72fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--ai-pick-color) 32%, var(--border));
+  border-radius: 16px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ai-pick-color) 11%, transparent), rgba(15,15,26,0.92) 58%), rgba(15,15,26,0.88);
+  overflow: hidden;
+  box-shadow: 0 18px 44px -34px color-mix(in srgb, var(--ai-pick-color) 55%, transparent);
+}
+.ai-daily-pick::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.08) 42%, transparent 58%);
+  transform: translateX(-120%);
+  animation: aiPickSweep 4.8s ease-in-out infinite;
+}
+.ai-daily-pick-orbit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ai-pick-color), transparent);
+  opacity: 0.7;
+}
+.ai-daily-pick-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.ai-daily-pick-logo {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  flex: 0 0 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--ai-pick-color) 34%, var(--border));
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.ai-daily-pick-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ai-daily-pick-logo span {
+  font-size: 1.65rem;
+}
+.ai-daily-pick-copy {
+  min-width: 0;
+}
+.ai-daily-pick-copy p {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  color: var(--ai-pick-color);
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+.ai-daily-pick-copy h2 {
+  color: var(--text);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.22rem;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+.ai-daily-pick-copy strong {
+  display: block;
+  margin-top: 4px;
+  color: #fff3b0;
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.ai-daily-pick-copy > span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+.ai-daily-pick-numbers {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 8px;
+}
+.ai-daily-pick-numbers div {
+  min-height: 76px;
+  padding: 10px 8px;
+  border: 1px solid color-mix(in srgb, var(--ai-pick-color) 22%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ai-pick-color) 8%, transparent);
+  text-align: center;
+}
+.ai-daily-pick-numbers span {
+  display: block;
+  color: var(--text-3);
+  font-family: 'Kanit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.ai-daily-pick-numbers strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--gold-light);
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+.ai-daily-pick-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 136px;
+}
+.ai-daily-pick-actions button,
+.ai-daily-pick-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 11px;
+  border-radius: 9px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ai-daily-pick-actions button {
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--ai-pick-color) 38%, transparent);
+  background: color-mix(in srgb, var(--ai-pick-color) 16%, transparent);
+  color: var(--ai-pick-color);
+  cursor: pointer;
+}
+.ai-daily-pick-actions button:hover {
+  background: color-mix(in srgb, var(--ai-pick-color) 22%, transparent);
+}
+.ai-daily-pick-actions a {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-2);
+}
+.ai-daily-pick-actions a:hover {
+  border-color: color-mix(in srgb, var(--ai-pick-color) 30%, transparent);
+  color: var(--ai-pick-color);
+}
+.ai-daily-pick-actions small {
+  max-width: 170px;
+  color: var(--text-3);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+@keyframes aiPickSweep {
+  0%, 54% { transform: translateX(-120%); }
+  78%, 100% { transform: translateX(120%); }
+}
+
 .market-search-field {
   position: relative;
   width: min(100%, 480px);
@@ -2003,6 +2247,40 @@ body::before {
   }
   .lottery-topic-hero aside {
     align-self: stretch;
+  }
+  .ai-daily-pick {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 14px;
+  }
+  .market-ticker {
+    margin-top: -2px;
+  }
+  .market-ticker-track {
+    animation-duration: 26s;
+  }
+  .market-ticker span {
+    min-height: 26px;
+    padding: 4px 9px;
+    font-size: 0.8rem;
+  }
+  .ai-daily-pick-main {
+    align-items: flex-start;
+  }
+  .ai-daily-pick-logo {
+    width: 54px;
+    height: 54px;
+    flex-basis: 54px;
+    border-radius: 13px;
+  }
+  .ai-daily-pick-numbers {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ai-daily-pick-actions {
+    min-width: 0;
+  }
+  .ai-daily-pick-actions small {
+    max-width: none;
   }
   .lucky-panel-head {
     flex-direction: column;

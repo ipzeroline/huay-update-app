@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   RefreshCw, ChevronLeft, ChevronRight,
   TrendingUp, Globe, Flag, Clock, LayoutGrid,
-  Menu, X, Compass, Sparkles, FileText, Calculator, Search,
+  Menu, X, Compass, Sparkles, FileText, Calculator, Search, CircleDollarSign,
 } from 'lucide-react'
 import { DICT, LANGS, LANG_LABEL, LANG_FLAG, isLang, type Lang, type Dict } from '@/lib/i18n'
 import { getLotterySeoPage, lotterySeoPages } from '@/lib/lottery-seo-pages'
@@ -104,6 +104,110 @@ const PAGE_HEADING: Record<Lang, { all: string; group: (name: string) => string 
     group: name => `今日${name}结果`,
   },
 }
+const AI_PICK_COPY: Record<Lang, {
+  kicker: string
+  title: string
+  subtitle: string
+  refresh: string
+  top3: string
+  top2: string
+  bottom2: string
+  view: string
+  note: string
+}> = {
+  th: {
+    kicker: 'AI สุ่มหวยประจำวัน',
+    title: 'หวยเด่นที่ AI เลือกให้วันนี้',
+    subtitle: 'สุ่มจากรายการหวยที่มีข้อมูลในระบบ พร้อมเลขแนวทางสำหรับจดเป็นไอเดีย',
+    refresh: 'สุ่มใหม่',
+    top3: '3 ตัวบน',
+    top2: '2 ตัวบน',
+    bottom2: '2 ตัวล่าง',
+    view: 'ดูผลย้อนหลัง',
+    note: 'ใช้เพื่อความบันเทิงและจดแนวทางเท่านั้น ไม่รับประกันผลรางวัล',
+  },
+  en: {
+    kicker: 'Daily AI lottery pick',
+    title: 'AI-picked lottery highlight today',
+    subtitle: 'Randomly selected from available lottery markets with number ideas for personal notes.',
+    refresh: 'Pick again',
+    top3: '3 Top',
+    top2: '2 Top',
+    bottom2: '2 Bottom',
+    view: 'View history',
+    note: 'For entertainment and personal notes only. No prize guarantee.',
+  },
+  la: {
+    kicker: 'AI ສຸ່ມຫວຍປະຈຳວັນ',
+    title: 'ຫວຍເດັ່ນທີ່ AI ເລືອກມື້ນີ້',
+    subtitle: 'ສຸ່ມຈາກລາຍການຫວຍໃນລະບົບ ພ້ອມເລກແນວທາງສຳລັບຈົດບັນທຶກ',
+    refresh: 'ສຸ່ມໃໝ່',
+    top3: '3 ໂຕເທິງ',
+    top2: '2 ໂຕເທິງ',
+    bottom2: '2 ໂຕລຸ່ມ',
+    view: 'ເບິ່ງຜົນຍ້ອນຫຼັງ',
+    note: 'ໃຊ້ເພື່ອຄວາມບັນເທີງ ແລະຈົດແນວທາງເທົ່ານັ້ນ ບໍ່ຮັບປະກັນຜົນ',
+  },
+  kh: {
+    kicker: 'AI ជ្រើសឆ្នោតប្រចាំថ្ងៃ',
+    title: 'ឆ្នោតដែល AI ជ្រើសសម្រាប់ថ្ងៃនេះ',
+    subtitle: 'ជ្រើសចៃដន្យពីទីផ្សារឆ្នោតដែលមានក្នុងប្រព័ន្ធ ជាមួយលេខសម្រាប់កំណត់ត្រាផ្ទាល់ខ្លួន',
+    refresh: 'ជ្រើសថ្មី',
+    top3: '3 ខ្ទង់លើ',
+    top2: '2 ខ្ទង់លើ',
+    bottom2: '2 ខ្ទង់ក្រោម',
+    view: 'មើលប្រវត្តិ',
+    note: 'សម្រាប់ការកម្សាន្ត និងកំណត់ត្រាផ្ទាល់ខ្លួនប៉ុណ្ណោះ មិនធានារង្វាន់ទេ',
+  },
+  zh: {
+    kicker: '每日 AI 彩票推荐',
+    title: 'AI 今日精选彩票',
+    subtitle: '从系统内可用彩票市场随机选择，并提供号码思路供个人记录。',
+    refresh: '重新选择',
+    top3: '前三位',
+    top2: '前两位',
+    bottom2: '后两位',
+    view: '查看历史',
+    note: '仅供娱乐和个人记录，不保证中奖。',
+  },
+}
+const MARKET_TICKER_COPY: Record<Lang, string[]> = {
+  th: [
+    'HUAY UPDATE +LIVE',
+    'ผลหวยวันนี้ อัปเดตครบทุกประเภท',
+    'หวยไทย หวยลาว หวยฮานอย หวยหุ้น หวยรายวัน',
+    'เลขเด็ด AI ใช้เป็นแนวทางเท่านั้น',
+    'ดูผลย้อนหลังแยกตามตลาดหวยได้ทันที',
+  ],
+  en: [
+    'HUAY UPDATE +LIVE',
+    'Today lottery results across every category',
+    'Thai Lao Hanoi Stock Daily markets',
+    'AI lucky numbers are for guidance only',
+    'Open lottery history by market instantly',
+  ],
+  la: [
+    'HUAY UPDATE +LIVE',
+    'ຜົນຫວຍມື້ນີ້ ອັບເດດຄົບທຸກປະເພດ',
+    'ຫວຍໄທ ຫວຍລາວ ຮານອຍ ຫວຍຫຸ້ນ ຫວຍລາຍວັນ',
+    'ເລກເດັດ AI ໃຊ້ເປັນແນວທາງເທົ່ານັ້ນ',
+    'ເບິ່ງຜົນຍ້ອນຫຼັງແຍກຕາມຕະຫຼາດໄດ້ທັນທີ',
+  ],
+  kh: [
+    'HUAY UPDATE +LIVE',
+    'លទ្ធផលឆ្នោតថ្ងៃនេះ អាប់ដេតគ្រប់ប្រភេទ',
+    'ឆ្នោតថៃ ឡាវ ហាណូយ ហ៊ុន ប្រចាំថ្ងៃ',
+    'លេខ AI សម្រាប់ជាគំនិតប៉ុណ្ណោះ',
+    'មើលប្រវត្តិតាមទីផ្សារបានភ្លាមៗ',
+  ],
+  zh: [
+    'HUAY UPDATE +LIVE',
+    '今日彩票结果覆盖全部分类',
+    '泰国 老挝 河内 股票 每日市场',
+    'AI 幸运号码仅供参考',
+    '可按市场立即查看历史结果',
+  ],
+}
 
 /* per-group highlight palettes — cycle through these per market card */
 const GROUP_PALETTE: Record<string, string[]> = {
@@ -200,6 +304,23 @@ function fmtTime(s: string | null, lang: Lang) {
   const [, hour, minute] = match
   return lang === 'en' ? `${hour}:${minute}` : `${hour}:${minute}`
 }
+function seededRandom(seed: string) {
+  let hash = 2166136261
+  for (let i = 0; i < seed.length; i += 1) {
+    hash ^= seed.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return () => {
+    hash += 0x6D2B79F5
+    let t = hash
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+function randomDigits(next: () => number, length: number) {
+  return Array.from({ length }, () => Math.floor(next() * 10)).join('')
+}
 function normalizeSearchText(value: string) {
   return value.trim().toLocaleLowerCase().replace(/\s+/g, '')
 }
@@ -257,6 +378,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [aiPickNonce, setAiPickNonce] = useState(0)
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const d = new Date((initialDate ?? toLocalDateStr(new Date())) + 'T12:00:00')
     return toLocalDateStr(new Date(d.getFullYear(), d.getMonth(), 1, 12))
@@ -324,6 +446,22 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
     (s, g) => s + g.markets.filter(m => m.result?.result_number && !m.result.result_number.no_result).length,
     0,
   )
+  const aiPick = useMemo(() => {
+    if (groupCode) return null
+    const markets = visibleGroups.flatMap(group => group.markets.map(market => ({ group, market })))
+    if (markets.length === 0) return null
+    const next = seededRandom(`${date}-${lang}-${aiPickNonce}-huay-ai`)
+    const selected = markets[Math.floor(next() * markets.length)]
+    const groupMeta = metaFor(selected.group.group_code)
+    return {
+      group: selected.group,
+      market: selected.market,
+      meta: groupMeta,
+      top3: randomDigits(next, 3),
+      top2: randomDigits(next, 2),
+      bottom2: randomDigits(next, 2),
+    }
+  }, [aiPickNonce, date, groupCode, lang, visibleGroups])
 
   const calendar = useMemo(() => {
     const base = new Date(calendarMonth + 'T12:00:00')
@@ -473,6 +611,9 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
               <Link href={`${langPrefix}/lottery-formula`} className="menu-drawer-item" onClick={() => setMenuOpen(false)}>
                 <Calculator size={18} /> <span>{t.menuLotteryFormula}</span>
               </Link>
+              <a href="https://zrate.io/" target="_blank" rel="noopener noreferrer" className="menu-drawer-item" onClick={() => setMenuOpen(false)}>
+                <CircleDollarSign size={18} /> <span>{t.menuExchangeRate}</span>
+              </a>
               <div className="menu-drawer-section-title">{MENU_TOPIC_TITLE[lang]}</div>
               {Object.keys(lotterySeoPages).map(slug => {
                 const topic = getLotterySeoPage(slug, lang)
@@ -569,6 +710,67 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
             </div>
           )}
         </div>
+
+        {!groupCode && (
+          <div className="market-ticker" aria-label="Huay Update live ticker">
+            <div className="market-ticker-track">
+              {[...MARKET_TICKER_COPY[lang], ...MARKET_TICKER_COPY[lang]].map((item, index) => (
+                <span key={`${item}-${index}`}>
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!loading && aiPick && (
+          <section className="ai-daily-pick" style={{ '--ai-pick-color': aiPick.meta.color } as CSSProperties & Record<'--ai-pick-color', string>}>
+            <div className="ai-daily-pick-orbit" aria-hidden="true" />
+            <div className="ai-daily-pick-main">
+              <div className="ai-daily-pick-logo">
+                {aiPick.market.market_logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={aiPick.market.market_logo} alt="" loading="lazy" decoding="async" />
+                ) : (
+                  <span>{emojiForGroup(aiPick.group.group_code)}</span>
+                )}
+              </div>
+              <div className="ai-daily-pick-copy">
+                <p>
+                  <Sparkles size={15} />
+                  <span>{AI_PICK_COPY[lang].kicker}</span>
+                </p>
+                <h2>{AI_PICK_COPY[lang].title}</h2>
+                <strong>{aiPick.market.market_name}</strong>
+                <span>{aiPick.group.group_name} · {AI_PICK_COPY[lang].subtitle}</span>
+              </div>
+            </div>
+            <div className="ai-daily-pick-numbers" aria-label={AI_PICK_COPY[lang].title}>
+              <div>
+                <span>{AI_PICK_COPY[lang].top3}</span>
+                <strong>{aiPick.top3}</strong>
+              </div>
+              <div>
+                <span>{AI_PICK_COPY[lang].top2}</span>
+                <strong>{aiPick.top2}</strong>
+              </div>
+              <div>
+                <span>{AI_PICK_COPY[lang].bottom2}</span>
+                <strong>{aiPick.bottom2}</strong>
+              </div>
+            </div>
+            <div className="ai-daily-pick-actions">
+              <button type="button" onClick={() => setAiPickNonce(value => value + 1)}>
+                <Sparkles size={15} />
+                <span>{AI_PICK_COPY[lang].refresh}</span>
+              </button>
+              <Link href={`${langPrefix}/market/${aiPick.market.market_id}`}>
+                {AI_PICK_COPY[lang].view}
+              </Link>
+              <small>{AI_PICK_COPY[lang].note}</small>
+            </div>
+          </section>
+        )}
 
         {data?.success && visibleGroups.length > 0 && (
           <div className="market-search-section">

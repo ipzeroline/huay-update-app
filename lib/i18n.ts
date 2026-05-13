@@ -43,6 +43,7 @@ export interface Dict {
   menuLuckyNumbers: string
   menuArticles: string
   menuLotteryFormula: string
+  menuExchangeRate: string
   searchLottery: string
   searchLotteryPlaceholder: string
   clearSearch: string
@@ -104,6 +105,7 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'เลขเด็ด',
     menuArticles: 'บทความ',
     menuLotteryFormula: 'สูตรคำนวณหวย',
+    menuExchangeRate: 'อัตราแลกเปลี่ยนวันนี้',
     searchLottery: 'ค้นหาชื่อหวย',
     searchLotteryPlaceholder: 'ค้นหาชื่อหวย เช่น ฮานอย ลาว หุ้น',
     clearSearch: 'ล้างคำค้นหา',
@@ -163,6 +165,7 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'Lucky Numbers',
     menuArticles: 'Articles',
     menuLotteryFormula: 'Lottery Formula',
+    menuExchangeRate: 'Today Exchange Rates',
     searchLottery: 'Search lottery name',
     searchLotteryPlaceholder: 'Search lottery name, e.g. Hanoi, Lao, stock',
     clearSearch: 'Clear search',
@@ -222,6 +225,7 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'ເລກເດັດ',
     menuArticles: 'ບົດຄວາມ',
     menuLotteryFormula: 'ສູດຄຳນວນຫວຍ',
+    menuExchangeRate: 'ອັດຕາແລກປ່ຽນມື້ນີ້',
     searchLottery: 'ຄົ້ນຫາຊື່ຫວຍ',
     searchLotteryPlaceholder: 'ຄົ້ນຫາຊື່ຫວຍ ເຊັ່ນ ຮານອຍ ລາວ ຫຸ້ນ',
     clearSearch: 'ລ້າງຄຳຄົ້ນຫາ',
@@ -281,6 +285,7 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: 'លេខសំណាង',
     menuArticles: 'អត្ថបទ',
     menuLotteryFormula: 'រូបមន្តគណនាឆ្នោត',
+    menuExchangeRate: 'អត្រាប្តូរប្រាក់ថ្ងៃនេះ',
     searchLottery: 'ស្វែងរកឈ្មោះឆ្នោត',
     searchLotteryPlaceholder: 'ស្វែងរកឈ្មោះឆ្នោត ដូចជា Hanoi, Lao, stock',
     clearSearch: 'សម្អាតការស្វែងរក',
@@ -340,6 +345,7 @@ export const DICT: Record<Lang, Dict> = {
     menuLuckyNumbers: '幸运号码',
     menuArticles: '文章',
     menuLotteryFormula: '彩票公式',
+    menuExchangeRate: '今日汇率',
     searchLottery: '搜索彩票名称',
     searchLotteryPlaceholder: '搜索彩票名称，例如 Hanoi、Lao、stock',
     clearSearch: '清除搜索',
