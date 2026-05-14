@@ -75,15 +75,15 @@ function compactMarketName(marketName: string) {
 function marketSeoKeywords(marketName: string, lang: Lang) {
   const compactName = compactMarketName(marketName)
   if (lang !== 'th') {
-    return [
+    return uniqueKeywords([
       `${marketName} latest result`,
       `${marketName} history`,
       `${marketName} lottery prediction`,
       `${marketName} number analysis`,
-    ]
+    ])
   }
 
-  return [
+  return uniqueKeywords([
     `ผล${marketName}`,
     `ผล${compactName}`,
     `${marketName}ย้อนหลัง`,
@@ -103,7 +103,11 @@ function marketSeoKeywords(marketName: string, lang: Lang) {
     `${marketName} 3 ตัวบน`,
     `${marketName} 2 ตัวบน`,
     `${marketName} 2 ตัวล่าง`,
-  ]
+  ])
+}
+
+function uniqueKeywords(keywords: string[]) {
+  return [...new Set(keywords.filter(Boolean))]
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

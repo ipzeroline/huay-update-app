@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BarChart3, Calculator, ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
+import { BarChart3, Bot, Calculator, ChevronLeft, ChevronRight, Sparkles, X } from 'lucide-react'
 import { type Dict, LANG_LOCALE, type Lang } from '@/lib/i18n'
 import type { MarketDetailResponse, MarketResult } from '@/lib/lottery-api'
 
@@ -526,7 +526,7 @@ function LotteryAnalysisBlock({
         <div className="market-ai-sweep" />
         <div className="market-ai-picks-head">
           <div>
-            <h3>{copy.aiTitle}</h3>
+            <h3><Bot size={20} />{copy.aiTitle}</h3>
             <p>{copy.aiSubtitle}</p>
           </div>
           <span style={{ background: `linear-gradient(135deg, ${accentHighlight}, ${accentColor})` }}>AI</span>
