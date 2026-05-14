@@ -68,6 +68,44 @@ function marketHistoryDescription(marketName: string, groupName: string | undefi
   return `ตรวจผล${marketName}ล่าสุด พร้อมผลย้อนหลัง${groupName ? `ของ ${groupName}` : ''}`
 }
 
+function compactMarketName(marketName: string) {
+  return marketName.replace(/\s+/g, '')
+}
+
+function marketSeoKeywords(marketName: string, lang: Lang) {
+  const compactName = compactMarketName(marketName)
+  if (lang !== 'th') {
+    return [
+      `${marketName} latest result`,
+      `${marketName} history`,
+      `${marketName} lottery prediction`,
+      `${marketName} number analysis`,
+    ]
+  }
+
+  return [
+    `ผล${marketName}`,
+    `ผล${compactName}`,
+    `${marketName}ย้อนหลัง`,
+    `${compactName}ย้อนหลัง`,
+    `ตรวจ${marketName}`,
+    `ตรวจ${compactName}`,
+    `เลข${marketName}เด็ดงวดนี้`,
+    `เลข${compactName}เด็ดงวดนี้`,
+    `เลข${marketName}ที่จะออกงวดนี้`,
+    `เลข${compactName}ที่จะออกงวดนี้`,
+    `เลขเด็ด${marketName}`,
+    `เลขเด็ด${compactName}`,
+    `แนวทาง${marketName}`,
+    `สูตรคำนวณ${marketName}`,
+    `วิเคราะห์${marketName}`,
+    `สถิติ${marketName}`,
+    `${marketName} 3 ตัวบน`,
+    `${marketName} 2 ตัวบน`,
+    `${marketName} 2 ตัวล่าง`,
+  ]
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, id } = await params
   if (!isSeoLang(lang)) return { title: 'Not found', robots: { index: false, follow: false } }
@@ -87,7 +125,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title,
       description,
-      keywords: [...siteKeywords, `ผล${market.name}`, `${market.name}ย้อนหลัง`, `ตรวจ${market.name}`],
+      keywords: [...siteKeywords, ...marketSeoKeywords(market.name, lang as Lang)],
       alternates: { canonical: path, languages: languageAlternates(marketPath(id)) },
       openGraph: baseOpenGraph(path, title, description),
       twitter: baseTwitter(title, description),
@@ -114,6 +152,8 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   const market = detail.data?.market
   if (!market) notFound()
   if (isHiddenLotteryMarket(market)) notFound()
+
+  const analysisDetail = await fetchMarketResults(id, currentLang, { page: 1, limit: 80 }).catch(() => null)
 
   const history = detail.data?.history ?? []
   const pagination = detail.data?.pagination
@@ -178,10 +218,55 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
           backHref={localizedPath('/', currentLang)}
           historyPage={historyPage}
           historyPageHref={(page) => historyPagePath(id, currentLang, page)}
+          analysisHistory={analysisDetail?.data?.history}
         />
+        <MarketSeoContent marketName={market.name} groupName={market.group_name} lang={currentLang} />
       </main>
 
       <LotterySeoContent currentDate={todayBangkok()} lang={currentLang} />
     </>
+  )
+}
+
+function MarketSeoContent({ marketName, groupName, lang }: { marketName: string; groupName: string; lang: Lang }) {
+  const compactName = compactMarketName(marketName)
+  const keywords = marketSeoKeywords(marketName, 'th').slice(6)
+
+  if (lang !== 'th') {
+    return (
+      <section className="market-seo-content" aria-label={`${marketName} lottery analysis`}>
+        <h2>{marketName} latest results, statistics, and number analysis</h2>
+        <p>
+          Follow the latest {marketName} result with recent history, top 3, top 2, bottom 2,
+          repeated pairs, frequency charts, and statistical number ideas for personal tracking.
+        </p>
+      </section>
+    )
+  }
+
+  return (
+    <section className="market-seo-content" aria-label={`ข้อมูล SEO ${marketName}`}>
+      <div className="market-seo-copy">
+        <h2>เลข{compactName}เด็ดงวดนี้ พร้อมสถิติย้อนหลัง</h2>
+        <p>
+          หน้านี้รวมผล{marketName}ล่าสุด ผลย้อนหลัง และแนวทางเลขเด็ด{marketName}
+          สำหรับคนที่ต้องการดูสถิติก่อนเลือกเลขงวดนี้ ทั้ง 3 ตัวบน 2 ตัวบน และ 2 ตัวล่าง
+          โดยระบบช่วยสรุปความถี่เลขเด่น คู่เลขที่ออกซ้ำ และกราฟแนวโน้มจากข้อมูลย้อนหลังของ{groupName}
+        </p>
+
+        <h3>เลข{compactName}ที่จะออกงวดนี้ ดูจากอะไร</h3>
+        <p>
+          การวิเคราะห์เลข{marketName}ที่จะออกงวดนี้ใช้ข้อมูลย้อนหลังหลายงวดมาจัดกลุ่มเลขเด่น
+          เปรียบเทียบเลขที่กลับมาออกซ้ำ และคำนวณชุดเลขตามสถิติ เพื่อใช้เป็นแนวทางประกอบการตัดสินใจเท่านั้น
+          ผลหวยยังเป็นการสุ่ม ไม่มีสูตรใดรับประกันผลรางวัลได้
+        </p>
+      </div>
+
+      <div className="market-seo-keywords" aria-label={`คำค้นหา ${marketName}`}>
+        {keywords.map(keyword => (
+          <span key={keyword}>{keyword}</span>
+        ))}
+      </div>
+    </section>
   )
 }
