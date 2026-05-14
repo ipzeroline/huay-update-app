@@ -1,4 +1,6 @@
-import { redirect } from 'next/navigation'
+import { permanentRedirect } from 'next/navigation'
+import { fetchMarketResults } from '@/lib/lottery-api'
+import { localizedMarketPath } from '@/lib/market-url'
 
 type PageProps = {
   params: Promise<{ id: string }>
@@ -6,5 +8,7 @@ type PageProps = {
 
 export default async function MarketPage({ params }: PageProps) {
   const { id } = await params
-  redirect(`/th/market/${id}`)
+  const detail = await fetchMarketResults(id, 'th').catch(() => null)
+  const marketName = detail?.data?.market?.name
+  permanentRedirect(encodeURI(localizedMarketPath(id, marketName, 'th')))
 }

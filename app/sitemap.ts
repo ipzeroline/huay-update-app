@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getSiteUrl } from '@/lib/site-url'
 import { fetchLotteryByDate, todayBangkok } from '@/lib/lottery-api'
+import { localizedMarketPath } from '@/lib/market-url'
 import { localizedPath, lotteryGroups, seoLangs } from '@/lib/seo'
 import { lotterySeoPages } from '@/lib/lottery-seo-pages'
 
@@ -82,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const response = await fetchLotteryByDate(today, 'th')
     const markets = response.data?.groups.flatMap(group => group.markets) ?? []
     marketUrls = seoLangs.flatMap(lang => markets.map(market => ({
-      url: `${siteUrl}${localizedPath(`/market/${market.market_id}`, lang)}`,
+      url: `${siteUrl}${localizedMarketPath(market.market_id, market.market_name, lang)}`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: lang === 'th' ? 0.82 : 0.66,

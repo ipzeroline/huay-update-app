@@ -1556,6 +1556,7 @@ body::before {
   border: 1px solid var(--border);
   background: var(--bg-card);
   color: var(--text-2);
+  cursor: pointer;
   text-decoration: none;
 }
 .market-detail-history-page-nav {
@@ -1584,6 +1585,10 @@ body::before {
 .market-detail-history-page-nav.disabled {
   pointer-events: none;
   opacity: 0.45;
+}
+.market-detail-history-page-nav:disabled,
+.market-detail-history-page-number:disabled {
+  cursor: default;
 }
 .market-detail-history-page-ellipsis {
   display: inline-flex;

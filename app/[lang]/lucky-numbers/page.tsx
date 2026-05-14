@@ -5,6 +5,7 @@ import Breadcrumbs from '@/app/breadcrumbs'
 import LangSwitcher from '@/app/lang-switcher'
 import { fetchLotteryByDate, todayBangkok, type Group } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
+import { localizedMarketPath } from '@/lib/market-url'
 import {
   absoluteUrl,
   baseOpenGraph,
@@ -420,7 +421,7 @@ function buildLuckyRows(groups: Group[], lang: Lang, date: string): LuckyNumberR
       groupName: group.group_name || lotteryGroupName(group.group_code, lang),
       marketName: market.market_name,
       marketLogo: marketLogo(market as unknown as Record<string, unknown>, group.group_code),
-      marketHref: localizedPath(`/market/${market.market_id}`, lang),
+      marketHref: localizedMarketPath(market.market_id, market.market_name, lang),
       top3: digits(next, 3),
       top2: digits(next, 2),
       bottom2: digits(next, 2),

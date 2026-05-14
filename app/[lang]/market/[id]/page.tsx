@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
+import { cache } from 'react'
 import Breadcrumbs from '@/app/breadcrumbs'
 import { MarketDetailPanel } from '@/app/market-detail-view'
 import LotterySeoContent, { faqJsonLd } from '@/app/lottery-seo-content'
 import { fetchMarketResults, isHiddenLotteryMarket, todayBangkok, type MarketResult } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
+import { localizedMarketPath, marketLanguageAlternates, marketPath, marketSlug } from '@/lib/market-url'
 import LangSwitcher from '@/app/lang-switcher'
 import {
   absoluteUrl,
@@ -13,7 +15,6 @@ import {
   breadcrumbJsonLd,
   formatSeoDate,
   isSeoLang,
-  languageAlternates,
   localizedPath,
   siteKeywords,
   siteName,
@@ -23,13 +24,13 @@ import { DICT } from '@/lib/i18n'
 export const revalidate = 60
 const HISTORY_PAGE_SIZE = 20
 
-type PageProps = {
-  params: Promise<{ lang: string; id: string }>
-  searchParams?: Promise<{ page?: string | string[] }>
-}
+const getMarketResults = cache((id: string, lang: Lang, page: number, limit: number) => (
+  fetchMarketResults(id, lang, { page, limit })
+))
 
-function marketPath(id: string) {
-  return `/market/${id}`
+type PageProps = {
+  params: Promise<{ lang: string; id: string; slug?: string }>
+  searchParams?: Promise<{ page?: string | string[] }>
 }
 
 function parseHistoryPage(page: string | string[] | undefined) {
@@ -38,9 +39,13 @@ function parseHistoryPage(page: string | string[] | undefined) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : 1
 }
 
-function historyPagePath(id: string, lang: Lang, page: number) {
-  const path = localizedPath(marketPath(id), lang)
-  return page > 1 ? `${path}?page=${page}` : path
+function decodeSlug(slug: string | undefined) {
+  if (!slug) return undefined
+  try {
+    return decodeURIComponent(slug)
+  } catch {
+    return slug
+  }
 }
 
 function resultSummary(result: MarketResult | null, lang: Lang) {
@@ -115,7 +120,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isSeoLang(lang)) return { title: 'Not found', robots: { index: false, follow: false } }
 
   try {
-    const detail = await fetchMarketResults(id, lang)
+    const detail = await getMarketResults(id, lang, 1, HISTORY_PAGE_SIZE)
     const market = detail.data?.market
     if (!market) throw new Error('Market not found')
     if (isHiddenLotteryMarket(market)) {
@@ -124,13 +129,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const title = marketHistoryTitle(market.name, lang)
     const description = marketHistoryDescription(market.name, undefined, lang)
-    const path = localizedPath(marketPath(id), lang)
+    const path = localizedMarketPath(id, market.name, lang)
 
     return {
       title,
       description,
       keywords: [...siteKeywords, ...marketSeoKeywords(market.name, lang as Lang)],
-      alternates: { canonical: path, languages: languageAlternates(marketPath(id)) },
+      alternates: { canonical: path, languages: marketLanguageAlternates(id, market.name) },
       openGraph: baseOpenGraph(path, title, description),
       twitter: baseTwitter(title, description),
       robots: { index: true, follow: true },
@@ -141,14 +146,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function LangMarketPage({ params, searchParams }: PageProps) {
-  const { lang, id } = await params
+  const { lang, id, slug } = await params
   const { page } = (await searchParams) ?? {}
   if (!isSeoLang(lang)) notFound()
   const currentLang = lang as Lang
-  const historyPage = parseHistoryPage(page)
+  const hasPageQuery = page !== undefined
+  const historyPage = hasPageQuery ? 1 : parseHistoryPage(page)
   let detail
   try {
-    detail = await fetchMarketResults(id, currentLang, { page: historyPage, limit: HISTORY_PAGE_SIZE })
+    detail = await getMarketResults(id, currentLang, historyPage, HISTORY_PAGE_SIZE)
   } catch {
     notFound()
   }
@@ -157,7 +163,11 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   if (!market) notFound()
   if (isHiddenLotteryMarket(market)) notFound()
 
-  const analysisDetail = await fetchMarketResults(id, currentLang, { page: 1, limit: 80 }).catch(() => null)
+  const canonicalSlug = marketSlug(market.name, currentLang)
+  const canonicalPath = localizedMarketPath(id, market.name, currentLang)
+  if (decodeSlug(slug) !== canonicalSlug || hasPageQuery) permanentRedirect(encodeURI(canonicalPath))
+
+  const analysisDetail = await getMarketResults(id, currentLang, 1, 80).catch(() => null)
 
   const history = detail.data?.history ?? []
   const pagination = detail.data?.pagination
@@ -167,12 +177,13 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   const t = DICT[currentLang]
   const title = marketHistoryTitle(market.name, currentLang)
   const description = marketHistoryDescription(market.name, market.group_name, currentLang)
+  const currentMarketPath = marketPath(id, market.name, currentLang)
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: title,
-    url: absoluteUrl(localizedPath(marketPath(id), currentLang)),
+    url: absoluteUrl(localizedPath(currentMarketPath, currentLang)),
     inLanguage: LANG_LOCALE[currentLang],
     description,
     isPartOf: { '@type': 'WebSite', name: siteName, url: absoluteUrl('/'), alternateName: 'ตรวจหวย' },
@@ -190,7 +201,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   const breadcrumbLd = breadcrumbJsonLd([
     { name: t.home, item: localizedPath('/', currentLang) },
     { name: market.group_name },
-    { name: market.name, item: localizedPath(marketPath(id), currentLang) },
+    { name: market.name, item: localizedPath(currentMarketPath, currentLang) },
   ])
 
   return (
@@ -221,7 +232,8 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
           lang={currentLang}
           backHref={localizedPath('/', currentLang)}
           historyPage={historyPage}
-          historyPageHref={(page) => historyPagePath(id, currentLang, page)}
+          marketId={id}
+          canonicalPath={canonicalPath}
           analysisHistory={analysisDetail?.data?.history}
         />
         <MarketSeoContent marketName={market.name} groupName={market.group_name} lang={currentLang} />

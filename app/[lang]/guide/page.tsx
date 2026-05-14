@@ -5,6 +5,7 @@ import Breadcrumbs from '@/app/breadcrumbs'
 import LangSwitcher from '@/app/lang-switcher'
 import { fetchLotteryByDate, todayBangkok, type Group } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
+import { localizedMarketPath } from '@/lib/market-url'
 import {
   absoluteUrl,
   baseOpenGraph,
@@ -371,7 +372,7 @@ export default async function GuidePage({ params }: PageProps) {
               {groups.length === 0 ? (
                 <span className="guide-muted">{copy.noMarkets}</span>
               ) : groups.flatMap(group => group.markets.map(market => (
-                <Link key={market.market_id} href={localizedPath(`/market/${market.market_id}`, currentLang)}>
+                <Link key={market.market_id} href={localizedMarketPath(market.market_id, market.market_name, currentLang)}>
                   {market.market_name || copy.marketsFallback}
                 </Link>
               )))}

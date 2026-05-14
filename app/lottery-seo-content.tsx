@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { localizedMarketPath } from '@/lib/market-url'
 import { formatSeoDate, localizedPath, lotteryGroups } from '@/lib/seo'
 import type { Lang } from '@/lib/i18n'
 import { getLotterySeoPage, lotterySeoPages } from '@/lib/lottery-seo-pages'
@@ -271,7 +272,7 @@ export default function LotterySeoContent({
             <h2>{copy.marketTitle}</h2>
             <div className="seo-date-links">
               {visibleMarkets.map(market => (
-                <Link key={market.market_id} href={href(`/market/${market.market_id}`)} className="seo-date-link">
+                <Link key={market.market_id} href={localizedMarketPath(market.market_id, market.market_name, lang)} className="seo-date-link">
                   {copy.marketLink(market.market_name)}
                 </Link>
               ))}

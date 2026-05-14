@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { DICT, LANGS, LANG_LABEL, LANG_FLAG, isLang, type Lang, type Dict } from '@/lib/i18n'
 import { getLotterySeoPage, lotterySeoPages } from '@/lib/lottery-seo-pages'
+import { marketPath } from '@/lib/market-url'
 
 /* ─── Types matching the 1168lot API ─── */
 interface ResultNumber {
@@ -764,7 +765,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
                 <Sparkles size={15} />
                 <span>{AI_PICK_COPY[lang].refresh}</span>
               </button>
-              <Link href={`${langPrefix}/market/${aiPick.market.market_id}`}>
+              <Link href={`${langPrefix}${marketPath(aiPick.market.market_id, aiPick.market.market_name, lang)}`}>
                 {AI_PICK_COPY[lang].view}
               </Link>
               <small>{AI_PICK_COPY[lang].note}</small>
@@ -1034,7 +1035,7 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
   const top2 = r?.result_top_2 || rn?.top_2 || ''
   const bottom2 = r?.result_bottom_2 || rn?.bottom_2 || ''
   const firstPrize = r?.first_prize || rn?.first_prize || ''
-  const historyHref = `${langPrefix}/market/${market.market_id}`
+  const historyHref = `${langPrefix}${marketPath(market.market_id, market.market_name, lang)}`
 
   return (
     <Link
