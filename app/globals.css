@@ -889,6 +889,7 @@ body::before {
   font-size: 0.9rem;
   font-family: 'Kanit', sans-serif;
   font-weight: 600;
+  white-space: nowrap;
 }
 .market-view-counter strong {
   display: block;
@@ -911,6 +912,7 @@ body::before {
   border: 1px solid rgba(212,175,55,0.18);
   font-size: 0.88rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 .market-detail-latest {
   padding: 20px 18px;
@@ -2894,11 +2896,29 @@ body::before {
     padding: 16px;
   }
   .market-view-counter {
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    padding: 14px;
+  }
+  .market-view-counter-main {
+    flex: 1 1 auto;
+    gap: 10px;
+  }
+  .market-view-counter-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .market-view-counter p {
+    font-size: 0.82rem;
   }
   .market-view-counter strong {
-    font-size: 1.65rem;
+    font-size: 1.45rem;
+  }
+  .market-view-counter-today {
+    padding: 7px 9px;
+    font-size: 0.8rem;
   }
   .market-analysis {
     padding: 14px;
