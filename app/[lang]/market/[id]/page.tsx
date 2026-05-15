@@ -4,7 +4,7 @@ import { cache } from 'react'
 import Breadcrumbs from '@/app/breadcrumbs'
 import { MarketDetailPanel } from '@/app/market-detail-view'
 import LotterySeoContent, { faqJsonLd } from '@/app/lottery-seo-content'
-import { fetchMarketResults, isHiddenLotteryMarket, todayBangkok, type MarketResult } from '@/lib/lottery-api'
+import { fetchMarketResults, isHiddenLotteryMarket, MARKET_RESULTS_PAGE_SIZE, todayBangkok, type MarketResult } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import { localizedMarketPath, marketLanguageAlternates, marketPath, marketSlug } from '@/lib/market-url'
 import LangSwitcher from '@/app/lang-switcher'
@@ -22,7 +22,7 @@ import {
 import { DICT } from '@/lib/i18n'
 
 export const revalidate = 60
-const HISTORY_PAGE_SIZE = 20
+const HISTORY_PAGE_SIZE = MARKET_RESULTS_PAGE_SIZE
 
 const getMarketResults = cache((id: string, lang: Lang, page: number, limit: number) => (
   fetchMarketResults(id, lang, { page, limit })
@@ -151,7 +151,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   if (!isSeoLang(lang)) notFound()
   const currentLang = lang as Lang
   const hasPageQuery = page !== undefined
-  const historyPage = hasPageQuery ? 1 : parseHistoryPage(page)
+  const historyPage = parseHistoryPage(page)
   let detail
   try {
     detail = await getMarketResults(id, currentLang, historyPage, HISTORY_PAGE_SIZE)
@@ -167,7 +167,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   const canonicalPath = localizedMarketPath(id, market.name, currentLang)
   if (decodeSlug(slug) !== canonicalSlug || hasPageQuery) permanentRedirect(encodeURI(canonicalPath))
 
-  const analysisDetail = await getMarketResults(id, currentLang, 1, 80).catch(() => null)
+  const analysisDetail = await getMarketResults(id, currentLang, 1, HISTORY_PAGE_SIZE).catch(() => null)
 
   const history = detail.data?.history ?? []
   const pagination = detail.data?.pagination

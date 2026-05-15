@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const langParam = searchParams.get('lang')
   const lang = isLang(langParam) ? langParam : 'th'
   try {
-    return NextResponse.json(await fetchLotteryByDate(date, lang), {
+    return NextResponse.json(await fetchLotteryByDate(date, lang, { cache: 'no-store' }), {
       headers: { 'Cache-Control': 'no-store, max-age=0' },
     })
   } catch (err) {

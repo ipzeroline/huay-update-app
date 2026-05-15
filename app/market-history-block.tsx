@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { type Dict, LANG_LOCALE, type Lang } from '@/lib/i18n'
-import type { MarketDetailResponse, MarketResult } from '@/lib/lottery-api'
+import { MARKET_RESULTS_PAGE_SIZE, type MarketDetailResponse, type MarketResult } from '@/lib/lottery-api'
 
-const HISTORY_PAGE_SIZE = 20
+const HISTORY_PAGE_SIZE = MARKET_RESULTS_PAGE_SIZE
 
 type HistoryPaginationData = {
   page: number
@@ -126,9 +126,9 @@ export function MarketHistoryBlock({
           </thead>
           <tbody>
             {visibleHistory.length > 0 ? (
-              visibleHistory.map(h => (
+              visibleHistory.map((h, index) => (
                 <HistoryTableRow
-                  key={h.draw_id}
+                  key={`${h.draw_id}-${h.draw_date}-${h.result_at ?? index}`}
                   result={h}
                   accentColor={accentColor}
                   t={t}

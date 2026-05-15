@@ -59,6 +59,32 @@ export interface LotteryByDateResponse {
 
 const HIDDEN_LOTTERY_GROUP_ID = 5
 const HIDDEN_LOTTERY_GROUP_NAME = 'หวยยี่กี'
+export const MARKET_RESULTS_PAGE_SIZE = 30
+const UPSTREAM_MARKET_RESULTS_PAGE_SIZE = 3
+const DEFAULT_REVALIDATE_SECONDS = 60
+
+type FetchCacheOptions = {
+  cache?: RequestCache
+  revalidate?: number
+}
+
+function apiFetchOptions(lang: string, options: FetchCacheOptions = {}): RequestInit & { next?: { revalidate?: number } } {
+  const requestOptions: RequestInit & { next?: { revalidate?: number } } = {
+    headers: {
+      Accept: 'application/json',
+      'User-Agent': 'Mozilla/5.0',
+      'X-Language': lang,
+    },
+  }
+
+  if (options.cache === 'no-store') {
+    requestOptions.cache = 'no-store'
+  } else {
+    requestOptions.next = { revalidate: options.revalidate ?? DEFAULT_REVALIDATE_SECONDS }
+  }
+
+  return requestOptions
+}
 
 function normalizedGroupName(name: string | null | undefined): string {
   return (name ?? '').replace(/\s+/g, '')
@@ -117,16 +143,13 @@ export function todayBangkok(): string {
   return fmt.format(new Date())
 }
 
-export async function fetchLotteryByDate(date: string, lang: string = 'th'): Promise<LotteryByDateResponse> {
+export async function fetchLotteryByDate(
+  date: string,
+  lang: string = 'th',
+  options: FetchCacheOptions = {},
+): Promise<LotteryByDateResponse> {
   const url = `https://api.1168lot.com/api/v1/lotto/results/by-date?date=${encodeURIComponent(date)}`
-  const res = await fetch(url, {
-    headers: {
-      Accept: 'application/json',
-      'User-Agent': 'Mozilla/5.0',
-      'X-Language': lang,
-    },
-    cache: 'no-store',
-  })
+  const res = await fetch(url, apiFetchOptions(lang, options))
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const payload: LotteryByDateResponse = await res.json()
   return hideHiddenLotteryGroups(payload)
@@ -135,19 +158,75 @@ export async function fetchLotteryByDate(date: string, lang: string = 'th'): Pro
 export async function fetchMarketResults(
   id: string,
   lang: string = 'th',
-  options: { page?: number; limit?: number } = {},
+  options: { page?: number; limit?: number } & FetchCacheOptions = {},
+): Promise<MarketDetailResponse> {
+  const requestedPage = Math.max(1, options.page ?? 1)
+  const requestedLimit = Math.max(1, options.limit ?? MARKET_RESULTS_PAGE_SIZE)
+
+  if (requestedLimit <= UPSTREAM_MARKET_RESULTS_PAGE_SIZE) {
+    return fetchMarketResultsPage(id, lang, requestedPage, requestedLimit, options)
+  }
+
+  const startIndex = (requestedPage - 1) * requestedLimit
+  const upstreamStartPage = Math.floor(startIndex / UPSTREAM_MARKET_RESULTS_PAGE_SIZE) + 1
+  const upstreamSkip = startIndex % UPSTREAM_MARKET_RESULTS_PAGE_SIZE
+  const upstreamPageCount = Math.ceil((upstreamSkip + requestedLimit) / UPSTREAM_MARKET_RESULTS_PAGE_SIZE)
+
+  const firstPage = await fetchMarketResultsPage(id, lang, upstreamStartPage, UPSTREAM_MARKET_RESULTS_PAGE_SIZE, options)
+  const pages: MarketDetailResponse[] = [firstPage]
+
+  if (firstPage.data?.pagination?.has_more && upstreamPageCount > 1) {
+    const pageNumbers = Array.from(
+      { length: upstreamPageCount - 1 },
+      (_, index) => upstreamStartPage + index + 1,
+    )
+    const settledPages = await Promise.allSettled(
+      pageNumbers.map(page => (
+        fetchMarketResultsPage(id, lang, page, UPSTREAM_MARKET_RESULTS_PAGE_SIZE, options)
+          .then(response => ({ page, response }))
+      )),
+    )
+
+    pages.push(
+      ...settledPages
+        .filter((result): result is PromiseFulfilledResult<{ page: number; response: MarketDetailResponse }> => (
+          result.status === 'fulfilled'
+        ))
+        .sort((a, b) => a.value.page - b.value.page)
+        .map(result => result.value.response),
+    )
+  }
+
+  const history = pages.flatMap(page => page.data?.history ?? []).slice(upstreamSkip, upstreamSkip + requestedLimit)
+  const total = firstPage?.data?.pagination?.total ?? history.length
+
+  return {
+    ...(firstPage ?? { success: false }),
+    data: firstPage?.data ? {
+      ...firstPage.data,
+      history,
+      pagination: {
+        page: requestedPage,
+        limit: requestedLimit,
+        count: history.length,
+        total,
+        has_more: requestedPage * requestedLimit < total,
+      },
+    } : firstPage?.data,
+  }
+}
+
+async function fetchMarketResultsPage(
+  id: string,
+  lang: string,
+  page: number,
+  limit: number,
+  options: FetchCacheOptions = {},
 ): Promise<MarketDetailResponse> {
   const url = new URL(`https://api.1168lot.com/api/v1/lotto/markets/${encodeURIComponent(id)}/results`)
-  if (options.page) url.searchParams.set('page', String(options.page))
-  if (options.limit) url.searchParams.set('limit', String(options.limit))
-  const res = await fetch(url, {
-    headers: {
-      Accept: 'application/json',
-      'User-Agent': 'Mozilla/5.0',
-      'X-Language': lang,
-    },
-    cache: 'no-store',
-  })
+  url.searchParams.set('page', String(page))
+  url.searchParams.set('limit', String(limit))
+  const res = await fetch(url, apiFetchOptions(lang, options))
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }

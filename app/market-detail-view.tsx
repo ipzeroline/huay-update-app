@@ -186,6 +186,28 @@ type LotteryAnalysis = {
   confidence: number
 }
 
+const digitPalette = [
+  { bg: '#ef4444', glow: '#fca5a5' },
+  { bg: '#f97316', glow: '#fdba74' },
+  { bg: '#eab308', glow: '#fde047' },
+  { bg: '#22c55e', glow: '#86efac' },
+  { bg: '#14b8a6', glow: '#5eead4' },
+  { bg: '#06b6d4', glow: '#67e8f9' },
+  { bg: '#3b82f6', glow: '#93c5fd' },
+  { bg: '#8b5cf6', glow: '#c4b5fd' },
+  { bg: '#ec4899', glow: '#f9a8d4' },
+  { bg: '#f43f5e', glow: '#fda4af' },
+]
+
+function digitColor(digit: string) {
+  const index = Number(digit)
+  return digitPalette[Number.isInteger(index) && index >= 0 ? index % digitPalette.length : 0]
+}
+
+function numberColor(value: string) {
+  return digitColor(value.replace(/\D/g, '')[0] ?? '0')
+}
+
 function numberText(result: MarketResult, field: 'top3' | 'top2' | 'bottom2' | 'firstPrize') {
   const rn = result.result_number
   if (rn?.no_result) return ''
@@ -408,26 +430,39 @@ function analysisCopy(lang: Lang) {
 function AiPickGroup({
   label,
   picks,
-  accentColor,
-  accentHighlight,
   featured = false,
 }: {
   label: string
   picks: string[]
-  accentColor: string
-  accentHighlight: string
   featured?: boolean
 }) {
   return (
     <div className={featured ? 'market-ai-pick-group featured' : 'market-ai-pick-group'}>
       <span>{label}</span>
-      <strong style={{
-        borderColor: featured ? `${accentHighlight}75` : `${accentColor}45`,
-      }}>{picks[0] ?? '-'}</strong>
+      {(() => {
+        const mainPick = picks[0] ?? '-'
+        const color = numberColor(mainPick)
+
+        return (
+          <strong style={{
+            borderColor: featured ? `${color.glow}85` : `${color.bg}55`,
+            background: `linear-gradient(135deg, ${color.glow}, ${color.bg})`,
+            boxShadow: `0 12px 30px ${color.bg}30`,
+          }}>{mainPick}</strong>
+        )
+      })()}
       <div>
-        {picks.slice(1).map(pick => (
-          <i key={pick}>{pick}</i>
-        ))}
+        {picks.slice(1).map(pick => {
+          const color = numberColor(pick)
+
+          return (
+            <i key={pick} style={{
+              borderColor: `${color.bg}4d`,
+              color: color.glow,
+              background: `${color.bg}18`,
+            }}>{pick}</i>
+          )
+        })}
       </div>
     </div>
   )
@@ -469,11 +504,16 @@ function LotteryAnalysisBlock({
           <span>{copy.sample}</span>
         </div>
         <div className="market-analysis-picks">
-          {analysis.suggestedNumbers.map(number => (
-            <span key={number} style={{
-              background: `linear-gradient(135deg, ${accentHighlight}, ${accentColor})`,
-            }}>{number}</span>
-          ))}
+          {analysis.suggestedNumbers.map(number => {
+            const color = numberColor(number)
+
+            return (
+              <span key={number} style={{
+                background: `linear-gradient(135deg, ${color.glow}, ${color.bg})`,
+                boxShadow: `0 10px 24px ${color.bg}30`,
+              }}>{number}</span>
+            )
+          })}
         </div>
       </div>
 
@@ -487,9 +527,9 @@ function LotteryAnalysisBlock({
           <span style={{ background: `linear-gradient(135deg, ${accentHighlight}, ${accentColor})` }}>AI</span>
         </div>
         <div className="market-ai-pick-grid">
-          <AiPickGroup label={copy.top3Pick} picks={analysis.aiPicks.top3} accentColor={accentColor} accentHighlight={accentHighlight} featured />
-          <AiPickGroup label={copy.top2Pick} picks={analysis.aiPicks.top2} accentColor={accentColor} accentHighlight={accentHighlight} />
-          <AiPickGroup label={copy.bottom2Pick} picks={analysis.aiPicks.bottom2} accentColor={accentColor} accentHighlight={accentHighlight} />
+          <AiPickGroup label={copy.top3Pick} picks={analysis.aiPicks.top3} featured />
+          <AiPickGroup label={copy.top2Pick} picks={analysis.aiPicks.top2} />
+          <AiPickGroup label={copy.bottom2Pick} picks={analysis.aiPicks.bottom2} />
         </div>
         <p className="market-ai-reason">{analysis.aiPicks.reason}</p>
       </article>
@@ -498,18 +538,26 @@ function LotteryAnalysisBlock({
         <article className="market-analysis-panel">
           <h3><BarChart3 size={16} />{copy.hotDigits}</h3>
           <div className="market-digit-chart">
-            {analysis.digitStats.map(stat => (
+            {analysis.digitStats.map(stat => {
+              const color = digitColor(stat.digit)
+
+              return (
               <div key={stat.digit} className="market-digit-row">
-                <span>{stat.digit}</span>
+                <span style={{
+                  background: `linear-gradient(135deg, ${color.glow}, ${color.bg})`,
+                  boxShadow: `0 8px 22px ${color.bg}36`,
+                }}>{stat.digit}</span>
                 <div>
                   <i style={{
                     width: `${Math.max(8, (stat.count / maxDigitCount) * 100)}%`,
-                    background: `linear-gradient(90deg, ${accentColor}, ${accentHighlight})`,
+                    background: `linear-gradient(90deg, ${color.bg}, ${color.glow})`,
+                    boxShadow: `0 0 16px ${color.bg}42`,
                   }} />
                 </div>
                 <strong>{stat.count}</strong>
               </div>
-            ))}
+              )
+            })}
           </div>
         </article>
 
@@ -520,7 +568,7 @@ function LotteryAnalysisBlock({
               <div key={number} className="market-formula-number">
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <strong style={{
-                  background: `linear-gradient(130deg, ${accentHighlight}, ${accentColor})`,
+                  background: `linear-gradient(130deg, ${numberColor(number).glow}, ${numberColor(number).bg})`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
