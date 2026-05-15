@@ -8,6 +8,7 @@ import { fetchMarketResults, isHiddenLotteryMarket, MARKET_RESULTS_PAGE_SIZE, to
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import { localizedMarketPath, marketLanguageAlternates, marketPath, marketSlug } from '@/lib/market-url'
 import LangSwitcher from '@/app/lang-switcher'
+import { getMarketViewStats } from '@/lib/market-views'
 import {
   absoluteUrl,
   baseOpenGraph,
@@ -168,6 +169,12 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   if (decodeSlug(slug) !== canonicalSlug || hasPageQuery) permanentRedirect(encodeURI(canonicalPath))
 
   const analysisDetail = await getMarketResults(id, currentLang, 1, HISTORY_PAGE_SIZE).catch(() => null)
+  const viewStats = await getMarketViewStats({
+    marketId: id,
+    marketName: market.name,
+    groupId: market.group_id,
+    groupName: market.group_name,
+  })
 
   const history = detail.data?.history ?? []
   const pagination = detail.data?.pagination
@@ -235,6 +242,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
           marketId={id}
           canonicalPath={canonicalPath}
           analysisHistory={analysisDetail?.data?.history}
+          viewStats={viewStats}
         />
         <MarketSeoContent marketName={market.name} groupName={market.group_name} lang={currentLang} />
       </main>

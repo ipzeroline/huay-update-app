@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { BarChart3, Bot, Calculator, ChevronLeft, Sparkles, X } from 'lucide-react'
 import { MarketHistoryBlock } from '@/app/market-history-block'
+import MarketViewCounter from '@/app/market-view-counter'
 import { type Dict, LANG_LOCALE, type Lang } from '@/lib/i18n'
 import type { MarketDetailResponse, MarketResult } from '@/lib/lottery-api'
+import type { MarketViewStats } from '@/lib/market-views'
 
 type MarketShell = {
   market_id?: number
@@ -52,6 +54,7 @@ export function MarketDetailPanel({
   marketId,
   canonicalPath,
   analysisHistory,
+  viewStats,
 }: {
   market: MarketShell
   detail: MarketDetailResponse | null
@@ -67,6 +70,7 @@ export function MarketDetailPanel({
   marketId?: string
   canonicalPath?: string
   analysisHistory?: MarketResult[]
+  viewStats?: MarketViewStats
 }) {
   const m = detail?.data?.market
   const latest = detail?.data?.latest_result
@@ -121,6 +125,17 @@ export function MarketDetailPanel({
 
         {!loading && detail?.success && (
           <>
+            {viewStats && (
+              <MarketViewCounter
+                marketId={String(m?.id ?? market.market_id ?? marketId ?? '')}
+                marketName={marketName}
+                groupId={m?.group_id ?? viewStats.groupId}
+                groupName={m?.group_name ?? viewStats.groupName}
+                initialStats={viewStats}
+                accentColor={accentColor}
+              />
+            )}
+
             {latest && (
               <LatestResultBlock
                 result={latest}

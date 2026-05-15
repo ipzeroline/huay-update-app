@@ -1,0 +1,20 @@
+{
+  "group": {
+    "id": 3,
+    "name": "หวยหุ้น"
+  },
+  "totalViews": 1,
+  "markets": {
+    "62": {
+      "marketId": "62",
+      "marketName": "สาละวัน VISA",
+      "groupId": 3,
+      "groupName": "หวยหุ้น",
+      "totalViews": 1,
+      "daily": {
+        "2026-05-15": 1
+      },
+      "lastViewedAt": "2026-05-15T02:40:14.623Z"
+    }
+  }
+}
