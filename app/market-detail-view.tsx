@@ -82,9 +82,7 @@ export function MarketDetailPanel({
     <div
       className={asModal ? 'market-detail-card modal-mode' : 'market-detail-card page-mode'}
       style={{
-        background: `linear-gradient(180deg, ${accentColor}0a 0%, var(--bg) 60%)`,
-        borderColor: `${accentColor}30`,
-        boxShadow: asModal ? `0 20px 60px ${accentColor}25` : `0 20px 60px ${accentColor}18`,
+        borderColor: 'rgba(0,245,255,0.24)',
       }}
     >
       <div className="market-detail-head">
@@ -456,28 +454,13 @@ function AiPickGroup({
       <span>{label}</span>
       {(() => {
         const mainPick = picks[0] ?? '-'
-        const color = numberColor(mainPick)
 
         return (
-          <strong style={{
-            borderColor: featured ? `${color.glow}85` : `${color.bg}55`,
-            background: `linear-gradient(135deg, ${color.glow}, ${color.bg})`,
-            boxShadow: `0 12px 30px ${color.bg}30`,
-          }}>{mainPick}</strong>
+          <strong>{mainPick}</strong>
         )
       })()}
       <div>
-        {picks.slice(1).map(pick => {
-          const color = numberColor(pick)
-
-          return (
-            <i key={pick} style={{
-              borderColor: `${color.bg}4d`,
-              color: color.glow,
-              background: `${color.bg}18`,
-            }}>{pick}</i>
-          )
-        })}
+        {picks.slice(1).map(pick => <i key={pick}>{pick}</i>)}
       </div>
     </div>
   )
@@ -519,21 +502,11 @@ function LotteryAnalysisBlock({
           <span>{copy.sample}</span>
         </div>
         <div className="market-analysis-picks">
-          {analysis.suggestedNumbers.map(number => {
-            const color = numberColor(number)
-
-            return (
-              <span key={number} style={{
-                background: `linear-gradient(135deg, ${color.glow}, ${color.bg})`,
-                boxShadow: `0 10px 24px ${color.bg}30`,
-              }}>{number}</span>
-            )
-          })}
+          {analysis.suggestedNumbers.map(number => <span key={number}>{number}</span>)}
         </div>
       </div>
 
       <article className="market-ai-picks" style={{ borderColor: `${accentColor}3d` }}>
-        <div className="market-ai-sweep" />
         <div className="market-ai-picks-head">
           <div>
             <h3><Bot size={20} />{copy.aiTitle}</h3>
@@ -560,13 +533,11 @@ function LotteryAnalysisBlock({
               <div key={stat.digit} className="market-digit-row">
                 <span style={{
                   background: `linear-gradient(135deg, ${color.glow}, ${color.bg})`,
-                  boxShadow: `0 8px 22px ${color.bg}36`,
                 }}>{stat.digit}</span>
                 <div>
                   <i style={{
                     width: `${Math.max(8, (stat.count / maxDigitCount) * 100)}%`,
                     background: `linear-gradient(90deg, ${color.bg}, ${color.glow})`,
-                    boxShadow: `0 0 16px ${color.bg}42`,
                   }} />
                 </div>
                 <strong>{stat.count}</strong>
@@ -583,10 +554,7 @@ function LotteryAnalysisBlock({
               <div key={number} className="market-formula-number">
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <strong style={{
-                  background: `linear-gradient(130deg, ${numberColor(number).glow}, ${numberColor(number).bg})`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
+                  color: index % 2 === 0 ? '#fff3b0' : '#bafcff',
                 }}>{number}</strong>
               </div>
             ))}
@@ -649,10 +617,9 @@ function LatestResultBlock({ result, accentColor, accentHighlight, t, lang }: { 
 
   return (
     <div className="market-detail-latest" style={{
-      background: `linear-gradient(135deg, ${accentColor}10 0%, rgba(8,8,16,0.5) 70%)`,
-      borderColor: `${accentColor}25`,
+      borderColor: 'rgba(0,245,255,0.26)',
     }}>
-      <div className="market-detail-kicker" style={{ color: accentColor }}>{t.latest}</div>
+      <div className="market-detail-kicker">{t.latest}</div>
       <div className="market-detail-date">
         📅 {fullDate(result.draw_date, lang)}
         <span> · {fmtTime(result.result_at)} {t.hourSuffix}</span>
@@ -668,10 +635,7 @@ function LatestResultBlock({ result, accentColor, accentHighlight, t, lang }: { 
             <div className="market-detail-history-first-prize">
               <span>{t.firstPrize}</span>
               <strong style={{
-                background: `linear-gradient(130deg, #f5d060, ${accentColor})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                color: '#fff3b0',
               }}>{firstPrize}</strong>
             </div>
           )}
@@ -691,10 +655,7 @@ function HistoryCell({ label, value, accentColor, accentHighlight, boxed = false
     <div className={boxed ? 'market-detail-history-cell boxed' : 'market-detail-history-cell'}>
       <div>{label}</div>
       <strong style={{
-        background: `linear-gradient(130deg, ${accentHighlight}, ${accentColor})`,
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
+        color: '#fff3b0',
       }}>{value || '—'}</strong>
     </div>
   )

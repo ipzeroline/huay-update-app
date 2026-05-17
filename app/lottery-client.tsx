@@ -726,7 +726,6 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
 
         {!loading && aiPick && (
           <section className="ai-daily-pick" style={{ '--ai-pick-color': aiPick.meta.color } as CSSProperties & Record<'--ai-pick-color', string>}>
-            <div className="ai-daily-pick-orbit" aria-hidden="true" />
             <div className="ai-daily-pick-main">
               <div className="ai-daily-pick-logo">
                 {aiPick.market.market_logo ? (

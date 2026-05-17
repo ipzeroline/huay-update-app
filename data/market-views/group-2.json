@@ -1,0 +1,31 @@
+{
+  "group": {
+    "id": 2,
+    "name": "หวยต่างประเทศ"
+  },
+  "totalViews": 4,
+  "markets": {
+    "6": {
+      "marketId": "6",
+      "marketName": "ฮานอย VIP",
+      "groupId": 2,
+      "groupName": "หวยต่างประเทศ",
+      "totalViews": 2,
+      "daily": {
+        "2026-05-17": 2
+      },
+      "lastViewedAt": "2026-05-17T14:34:06.609Z"
+    },
+    "7": {
+      "marketId": "7",
+      "marketName": "หวยมาเลเซีย",
+      "groupId": 2,
+      "groupName": "หวยต่างประเทศ",
+      "totalViews": 2,
+      "daily": {
+        "2026-05-17": 2
+      },
+      "lastViewedAt": "2026-05-17T14:31:52.706Z"
+    }
+  }
+}
