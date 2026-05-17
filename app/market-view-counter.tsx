@@ -43,30 +43,41 @@ export default function MarketViewCounter({
     if (!marketId || typeof window === 'undefined') return
 
     if (window.localStorage.getItem(storageKey)) return
-    window.localStorage.setItem(storageKey, '1')
-
     const controller = new AbortController()
-    fetch('/api/market-views', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ marketId, marketName, groupId, groupName }),
-      cache: 'no-store',
-      keepalive: true,
-      signal: controller.signal,
-    })
-      .then(response => response.ok ? response.json() : null)
-      .then(payload => {
-        if (payload?.success && payload.data) {
-          setStats(payload.data)
-        } else {
-          window.localStorage.removeItem(storageKey)
-        }
-      })
-      .catch(() => {
-        window.localStorage.removeItem(storageKey)
-      })
 
-    return () => controller.abort()
+    const recordView = () => {
+      if (controller.signal.aborted || window.localStorage.getItem(storageKey)) return
+      window.localStorage.setItem(storageKey, '1')
+
+      fetch('/api/market-views', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ marketId, marketName, groupId, groupName }),
+        cache: 'no-store',
+        keepalive: true,
+        signal: controller.signal,
+      })
+        .then(response => response.ok ? response.json() : null)
+        .then(payload => {
+          if (payload?.success && payload.data) {
+            setStats(payload.data)
+          } else {
+            window.localStorage.removeItem(storageKey)
+          }
+        })
+        .catch(() => {
+          window.localStorage.removeItem(storageKey)
+        })
+    }
+
+    const idleCallback = window.requestIdleCallback?.(recordView, { timeout: 2000 })
+    const timeout = idleCallback === undefined ? window.setTimeout(recordView, 1200) : undefined
+
+    return () => {
+      controller.abort()
+      if (idleCallback !== undefined) window.cancelIdleCallback?.(idleCallback)
+      if (timeout !== undefined) window.clearTimeout(timeout)
+    }
   }, [groupId, groupName, marketId, marketName, storageKey])
 
   return (

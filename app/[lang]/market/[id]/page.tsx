@@ -24,6 +24,7 @@ import { DICT } from '@/lib/i18n'
 
 export const revalidate = 60
 const HISTORY_PAGE_SIZE = MARKET_RESULTS_PAGE_SIZE
+const METADATA_HISTORY_PAGE_SIZE = 1
 
 const getMarketResults = cache((id: string, lang: Lang, page: number, limit: number) => (
   fetchMarketResults(id, lang, { page, limit })
@@ -121,7 +122,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isSeoLang(lang)) return { title: 'Not found', robots: { index: false, follow: false } }
 
   try {
-    const detail = await getMarketResults(id, lang, 1, HISTORY_PAGE_SIZE)
+    const detail = await getMarketResults(id, lang, 1, METADATA_HISTORY_PAGE_SIZE)
     const market = detail.data?.market
     if (!market) throw new Error('Market not found')
     if (isHiddenLotteryMarket(market)) {

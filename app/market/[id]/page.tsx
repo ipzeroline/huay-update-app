@@ -8,7 +8,7 @@ type PageProps = {
 
 export default async function MarketPage({ params }: PageProps) {
   const { id } = await params
-  const detail = await fetchMarketResults(id, 'th').catch(() => null)
+  const detail = await fetchMarketResults(id, 'th', { limit: 1 }).catch(() => null)
   const marketName = detail?.data?.market?.name
   permanentRedirect(encodeURI(localizedMarketPath(id, marketName, 'th')))
 }
