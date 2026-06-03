@@ -7,8 +7,6 @@ import { getSiteUrl } from '@/lib/site-url'
 import { baseOpenGraph, baseTwitter, siteDescription, siteKeywords, siteName, siteTitle } from '@/lib/seo'
 
 const GOOGLE_ANALYTICS_ID = 'G-BSRB6SK1PD'
-const MONETAG_IN_PAGE_PUSH_ZONE = '11093557'
-const MONETAG_VIGNETTE_ZONE = '11093559'
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -49,26 +47,24 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="th">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(s){s.dataset.zone='11093557',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))",
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(s){s.dataset.zone='11093559',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))",
+          }}
+        />
+      </head>
       <body>
         {children}
         <SiteFooter />
         <AddToHomeScreen />
-        <Script id="monetag-in-page-push" strategy="afterInteractive">
-          {`
-            (function(s){
-              s.dataset.zone='${MONETAG_IN_PAGE_PUSH_ZONE}',
-              s.src='https://nap5k.com/tag.min.js'
-            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))
-          `}
-        </Script>
-        <Script id="monetag-vignette" strategy="afterInteractive">
-          {`
-            (function(s){
-              s.dataset.zone='${MONETAG_VIGNETTE_ZONE}',
-              s.src='https://n6wxm.com/vignette.min.js'
-            })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))
-          `}
-        </Script>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
           strategy="afterInteractive"
