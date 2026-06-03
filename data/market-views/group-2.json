@@ -3,8 +3,19 @@
     "id": 2,
     "name": "หวยต่างประเทศ"
   },
-  "totalViews": 4,
+  "totalViews": 5,
   "markets": {
+    "5": {
+      "marketId": "5",
+      "marketName": "ฮานอยปกติ",
+      "groupId": 2,
+      "groupName": "หวยต่างประเทศ",
+      "totalViews": 1,
+      "daily": {
+        "2026-05-17": 1
+      },
+      "lastViewedAt": "2026-05-17T14:54:52.705Z"
+    },
     "6": {
       "marketId": "6",
       "marketName": "ฮานอย VIP",
