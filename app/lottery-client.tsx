@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef, type CSSProperties } from 'react'
+import { Fragment, useState, useEffect, useCallback, useMemo, useRef, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -11,6 +11,8 @@ import {
 import { DICT, LANGS, LANG_LABEL, LANG_FLAG, isLang, type Lang, type Dict } from '@/lib/i18n'
 import { getLotterySeoPage, lotterySeoPages } from '@/lib/lottery-seo-pages'
 import { marketPath } from '@/lib/market-url'
+import Adsterra300x250 from '@/components/Adsterra300x250'
+import AdsterraNative from '@/components/AdsterraNative'
 
 /* ─── Types matching the 1168lot API ─── */
 interface ResultNumber {
@@ -426,8 +428,11 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
     : pathname.startsWith('/lottery/') && !pathname.startsWith('/lottery/group/')
     ? lotteryDatePath(date, langPrefix)
     : langPrefix || '/'
+  const normalizedLangPath = langPrefix || '/'
+  const isHomePage = pathname === normalizedLangPath || pathname === `${normalizedLangPath}/`
   const visibleGroups = groupCode ? groups.filter(group => group.group_code === groupCode) : groups
   const normalizedSearchQuery = normalizeSearchText(searchQuery)
+  const showHomeAds = isHomePage && !normalizedSearchQuery
   const displayedGroups = useMemo(() => {
     if (!normalizedSearchQuery) return visibleGroups
 
@@ -834,43 +839,50 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
           </div>
         )}
 
-        {!loading && data?.success && displayedGroups.map(g => {
+        {!loading && data?.success && displayedGroups.length > 0 && showHomeAds && <Adsterra300x250 />}
+
+        {!loading && data?.success && displayedGroups.map((g, groupIndex) => {
           const m = metaFor(g.group_code)
           return (
-            <div key={g.group_code} style={{ marginBottom: 36 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '8px 12px', borderRadius: 12,
-                  background: `linear-gradient(135deg, ${m.color}18, ${m.color}06)`,
-                  border: `1px solid ${m.color}40`,
-                }}>
-                  <h3 className="font-th" style={{
-                    fontSize: '1.5rem', fontWeight: 700,
-                    lineHeight: 1,
+            <Fragment key={g.group_code}>
+              <div style={{ marginBottom: 36 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                  <div style={{
                     display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 12px', borderRadius: 12,
+                    background: `linear-gradient(135deg, ${m.color}18, ${m.color}06)`,
+                    border: `1px solid ${m.color}40`,
                   }}>
-                    <span>{emojiForGroup(g.group_code)}</span>
-                    <span style={{ color: m.color }}>{g.group_name}</span>
-                  </h3>
+                    <h3 className="font-th" style={{
+                      fontSize: '1.5rem', fontWeight: 700,
+                      lineHeight: 1,
+                      display: 'flex', alignItems: 'center', gap: 8,
+                    }}>
+                      <span>{emojiForGroup(g.group_code)}</span>
+                      <span style={{ color: m.color }}>{g.group_name}</span>
+                    </h3>
+                  </div>
+                  <div style={{ flex: 1, height: 2, background: `linear-gradient(90deg, ${m.color}50, transparent)`, borderRadius: 1 }} />
+                  <span style={{
+                    fontSize: '0.95rem', color: m.color, fontFamily: 'Kanit,sans-serif', fontWeight: 600,
+                    padding: '4px 10px', borderRadius: 8,
+                    background: `${m.color}12`, border: `1px solid ${m.color}30`,
+                  }}>
+                    {g.markets.filter(mk => mk.result?.result_number && !mk.result.result_number.no_result).length}/{g.markets.length}
+                  </span>
                 </div>
-                <div style={{ flex: 1, height: 2, background: `linear-gradient(90deg, ${m.color}50, transparent)`, borderRadius: 1 }} />
-                <span style={{
-                  fontSize: '0.95rem', color: m.color, fontFamily: 'Kanit,sans-serif', fontWeight: 600,
-                  padding: '4px 10px', borderRadius: 8,
-                  background: `${m.color}12`, border: `1px solid ${m.color}30`,
-                }}>
-                  {g.markets.filter(mk => mk.result?.result_number && !mk.result.result_number.no_result).length}/{g.markets.length}
-                </span>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
+                  {(() => { const palette = paletteFor(g.group_code); return g.markets.map((mk, idx) => (
+                    <MarketCard key={mk.market_id} market={mk} accentColor={m.color} accentHighlight={palette[idx % palette.length]} index={idx} t={t} lang={lang} langPrefix={langPrefix} />
+                  )) })()}
+                </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
-                {(() => { const palette = paletteFor(g.group_code); return g.markets.map((mk, idx) => (
-                  <MarketCard key={mk.market_id} market={mk} accentColor={m.color} accentHighlight={palette[idx % palette.length]} index={idx} t={t} lang={lang} langPrefix={langPrefix} />
-                )) })()}
-              </div>
-            </div>
+              {showHomeAds && groupIndex === Math.min(1, displayedGroups.length - 1) && <AdsterraNative />}
+            </Fragment>
           )
         })}
+
+        {!loading && data?.success && displayedGroups.length > 0 && showHomeAds && <Adsterra300x250 />}
       </div>
 
     </div>

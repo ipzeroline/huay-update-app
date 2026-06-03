@@ -77,6 +77,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', '${GOOGLE_ANALYTICS_ID}');
           `}
         </Script>
+        <Script
+          src="https://pl29626124.effectivecpmnetwork.com/15/f6/d4/15f6d492c41a52461bf26bd6fb24a400.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )

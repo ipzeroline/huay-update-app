@@ -4,6 +4,8 @@ import { todayBangkok } from '@/lib/lottery-api'
 import type { Lang } from '@/lib/i18n'
 import { formatSeoDate, localizedPath, lotteryGroups } from '@/lib/seo'
 import { getLotterySeoPage, lotterySeoPages, type LotterySeoSlug } from '@/lib/lottery-seo-pages'
+import Adsterra300x250 from '@/components/Adsterra300x250'
+import AdsterraNative from '@/components/AdsterraNative'
 
 const topicCopy: Record<Lang, {
   home: string
@@ -102,6 +104,8 @@ export default function LotteryTopicPage({ lang, slug }: { lang: Lang; slug: Lot
         </aside>
       </section>
 
+      <Adsterra300x250 />
+
       <section className="lottery-topic-grid">
         {page.sections.map(section => (
           <article key={section.heading} className="lottery-topic-card">
@@ -136,6 +140,10 @@ export default function LotteryTopicPage({ lang, slug }: { lang: Lang; slug: Lot
           </div>
         </div>
       </section>
+
+      <AdsterraNative />
+
+      <Adsterra300x250 />
 
       <section className="lottery-topic-faq">
         <h2>{copy.faq}</h2>
