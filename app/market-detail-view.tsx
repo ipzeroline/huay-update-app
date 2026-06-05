@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { BarChart3, Bot, Calculator, ChevronLeft, Sparkles, X } from 'lucide-react'
+import Adsterra300x250 from '@/components/Adsterra300x250'
+import AdsterraNative from '@/components/AdsterraNative'
 import { MarketHistoryBlock } from '@/app/market-history-block'
 import MarketViewCounter from '@/app/market-view-counter'
 import { type Dict, LANG_LOCALE, type Lang } from '@/lib/i18n'
@@ -144,6 +146,8 @@ export function MarketDetailPanel({
               />
             )}
 
+            {!asModal && <Adsterra300x250 />}
+
             {analysis && (
               <LotteryAnalysisBlock
                 analysis={analysis}
@@ -152,6 +156,8 @@ export function MarketDetailPanel({
                 lang={lang}
               />
             )}
+
+            {!asModal && <AdsterraNative />}
 
             <MarketHistoryBlock
               marketId={marketId ?? String(m?.id ?? market.market_id ?? '')}

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Breadcrumbs from '@/app/breadcrumbs'
 import LangSwitcher from '@/app/lang-switcher'
+import Adsterra300x250 from '@/components/Adsterra300x250'
+import AdsterraNative from '@/components/AdsterraNative'
 import { fetchLotteryByDate, todayBangkok, type Group } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import { localizedMarketPath } from '@/lib/market-url'
@@ -352,6 +354,8 @@ export default async function GuidePage({ params }: PageProps) {
           </aside>
         </section>
 
+        <Adsterra300x250 />
+
         <section className="lottery-topic-links guide-category-links" aria-label={copy.groupsTitle}>
           <div>
             <h2>{copy.groupsTitle}</h2>
@@ -394,6 +398,8 @@ export default async function GuidePage({ params }: PageProps) {
             )
           })}
         </section>
+
+        <AdsterraNative />
 
         <section className="lottery-topic-grid guide-section-grid" aria-label={copy.guideTitle}>
           {copy.sections.map(section => (

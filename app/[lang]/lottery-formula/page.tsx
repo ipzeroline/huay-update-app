@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { Calculator, ChevronLeft } from 'lucide-react'
 import Breadcrumbs from '@/app/breadcrumbs'
 import LangSwitcher from '@/app/lang-switcher'
+import Adsterra300x250 from '@/components/Adsterra300x250'
+import AdsterraNative from '@/components/AdsterraNative'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import {
   absoluteUrl,
@@ -326,6 +328,8 @@ export default async function LotteryFormulaPage({ params }: PageProps) {
           <p>{copy.lead}</p>
         </section>
 
+        <Adsterra300x250 />
+
         <section className="formula-grid" aria-label={copy.title}>
           {copy.formulas.map((formula, index) => (
             <article key={formula.title} className={`formula-card tone-${formula.tone}`}>
@@ -343,6 +347,8 @@ export default async function LotteryFormulaPage({ params }: PageProps) {
             </article>
           ))}
         </section>
+
+        <AdsterraNative />
 
         <aside className="formula-note">
           <h2>{copy.noteTitle}</h2>

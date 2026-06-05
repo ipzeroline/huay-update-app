@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Breadcrumbs from '@/app/breadcrumbs'
 import LangSwitcher from '@/app/lang-switcher'
+import Adsterra300x250 from '@/components/Adsterra300x250'
+import AdsterraNative from '@/components/AdsterraNative'
 import { fetchLotteryByDate, todayBangkok, type Group } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import { localizedMarketPath } from '@/lib/market-url'
@@ -550,6 +552,8 @@ export default async function LuckyNumbersPage({ params }: PageProps) {
 
         <LuckyNumbersClient lang={currentLang} rows={rows} copy={copy.table} />
 
+        <Adsterra300x250 />
+
         <section className="lottery-topic-grid lucky-article-grid" aria-label={copy.articleTitle}>
           {copy.articleSections.map(section => (
             <article key={section.heading} className="lottery-topic-card">
@@ -558,6 +562,8 @@ export default async function LuckyNumbersPage({ params }: PageProps) {
             </article>
           ))}
         </section>
+
+        <AdsterraNative />
 
         <section className="lottery-topic-faq">
           <h2>{copy.faqTitle}</h2>
