@@ -428,11 +428,8 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
     : pathname.startsWith('/lottery/') && !pathname.startsWith('/lottery/group/')
     ? lotteryDatePath(date, langPrefix)
     : langPrefix || '/'
-  const normalizedLangPath = langPrefix || '/'
-  const isHomePage = pathname === normalizedLangPath || pathname === `${normalizedLangPath}/`
   const visibleGroups = groupCode ? groups.filter(group => group.group_code === groupCode) : groups
   const normalizedSearchQuery = normalizeSearchText(searchQuery)
-  const showHomeAds = isHomePage && !normalizedSearchQuery
   const displayedGroups = useMemo(() => {
     if (!normalizedSearchQuery) return visibleGroups
 
@@ -839,7 +836,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
           </div>
         )}
 
-        {!loading && data?.success && displayedGroups.length > 0 && showHomeAds && <Adsterra300x250 />}
+        {!loading && data?.success && displayedGroups.length > 0 && <Adsterra300x250 />}
 
         {!loading && data?.success && displayedGroups.map((g, groupIndex) => {
           const m = metaFor(g.group_code)
@@ -877,12 +874,12 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
                   )) })()}
                 </div>
               </div>
-              {showHomeAds && groupIndex === Math.min(1, displayedGroups.length - 1) && <AdsterraNative />}
+              {groupIndex === Math.min(1, displayedGroups.length - 1) && <AdsterraNative />}
             </Fragment>
           )
         })}
 
-        {!loading && data?.success && displayedGroups.length > 0 && showHomeAds && <Adsterra300x250 />}
+        {!loading && data?.success && displayedGroups.length > 0 && <Adsterra300x250 />}
       </div>
 
     </div>
