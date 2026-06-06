@@ -1,8 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Script from "next/script";
 
+const DESKTOP_BREAKPOINT = 900;
+
 export default function AdsterraNative() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // ซ่อน Native Banner บนมือถือ (mobile < 900px)
+  if (!isDesktop) return null;
+
   return (
     <div className="adsterra-native-slot">
       <Script
