@@ -4,6 +4,7 @@ import { cache } from 'react'
 import Breadcrumbs from '@/app/breadcrumbs'
 import { MarketDetailPanel } from '@/app/market-detail-view'
 import LotterySeoContent, { faqJsonLd } from '@/app/lottery-seo-content'
+import { getMarketDescription } from '@/lib/market-descriptions'
 import { fetchMarketResults, isHiddenLotteryMarket, MARKET_RESULTS_PAGE_SIZE, todayBangkok, type MarketResult } from '@/lib/lottery-api'
 import { LANG_LOCALE, type Lang } from '@/lib/i18n'
 import { localizedMarketPath, marketLanguageAlternates, marketPath, marketSlug } from '@/lib/market-url'
@@ -245,7 +246,7 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
           analysisHistory={analysisDetail?.data?.history}
           viewStats={viewStats}
         />
-        <MarketSeoContent marketName={market.name} groupName={market.group_name} lang={currentLang} />
+        <MarketSeoContent marketId={id} marketName={market.name} groupName={market.group_name} lang={currentLang} />
       </main>
 
       <LotterySeoContent currentDate={todayBangkok()} lang={currentLang} />
@@ -253,9 +254,10 @@ export default async function LangMarketPage({ params, searchParams }: PageProps
   )
 }
 
-function MarketSeoContent({ marketName, groupName, lang }: { marketName: string; groupName: string; lang: Lang }) {
+function MarketSeoContent({ marketId, marketName, groupName, lang }: { marketId: string; marketName: string; groupName: string; lang: Lang }) {
   const compactName = compactMarketName(marketName)
   const keywords = marketSeoKeywords(marketName, 'th').slice(6)
+  const desc = getMarketDescription(marketId)
 
   if (lang !== 'th') {
     return (
@@ -265,6 +267,23 @@ function MarketSeoContent({ marketName, groupName, lang }: { marketName: string;
           Follow the latest {marketName} result with recent history, top 3, top 2, bottom 2,
           repeated pairs, frequency charts, and statistical number ideas for personal tracking.
         </p>
+      </section>
+    )
+  }
+
+  // use market-specific description if available, otherwise fall back to generic text
+  if (desc) {
+    return (
+      <section className="market-seo-content" aria-label={`รายละเอียด ${marketName}`}>
+        <div className="market-seo-copy">
+          <h2>{desc.heading}</h2>
+          <p dangerouslySetInnerHTML={{ __html: desc.body }} />
+        </div>
+        <div className="market-seo-keywords" aria-label={`คำค้นหา ${marketName}`}>
+          {keywords.map(keyword => (
+            <span key={keyword}>{keyword}</span>
+          ))}
+        </div>
       </section>
     )
   }

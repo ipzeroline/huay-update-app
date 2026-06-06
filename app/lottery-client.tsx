@@ -523,7 +523,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
               <Link href={langPrefix || '/'} className="header-brand" aria-label={t.brand}>
               <div className="header-logo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.png" alt="Huay Update" width={1024} height={1024} decoding="async" />
+                <img src="/logo.png" alt="Huay Update" width={1024} height={1024} decoding="async" fetchPriority="high" />
               </div>
               <div className="header-brand-text">
                 <div className="header-brand-name font-th">{t.brand}</div>
@@ -617,6 +617,9 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
               <a href="https://zrate.io/" target="_blank" rel="noopener noreferrer" className="menu-drawer-item" onClick={() => setMenuOpen(false)}>
                 <CircleDollarSign size={18} /> <span>{t.menuExchangeRate}</span>
               </a>
+              <Link href={`${langPrefix}/blog`} className="menu-drawer-item" onClick={() => setMenuOpen(false)}>
+                <FileText size={18} /> <span>📝 บทความ</span>
+              </Link>
               <div className="menu-drawer-section-title">{MENU_TOPIC_TITLE[lang]}</div>
               {Object.keys(lotterySeoPages).map(slug => {
                 const topic = getLotterySeoPage(slug, lang)
@@ -732,7 +735,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
               <div className="ai-daily-pick-logo">
                 {aiPick.market.market_logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={aiPick.market.market_logo} alt="" loading="lazy" decoding="async" />
+                  <img src={aiPick.market.market_logo} alt={`${aiPick.market.market_name} logo`} width={62} height={62} loading="lazy" decoding="async" />
                 ) : (
                   <span>{emojiForGroup(aiPick.group.group_code)}</span>
                 )}
@@ -1096,7 +1099,7 @@ function MarketCard({ market, accentColor, accentHighlight, index, t, lang, lang
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, paddingRight: 38 }}>
         {market.market_logo && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={market.market_logo} alt="" loading="lazy" decoding="async" style={{
+          <img src={market.market_logo} alt={`${market.market_name} logo`} width={36} height={36} loading="lazy" decoding="async" style={{
             width: 36, height: 36, borderRadius: 9, objectFit: 'cover',
             border: '1px solid var(--border)', flexShrink: 0,
           }} />

@@ -32,6 +32,14 @@ function isFutureDate(date: string): boolean {
   return date > todayBangkok()
 }
 
+/** หน้าที่ย้อนหลังเกิน 365 วัน → noindex แต่ยังให้ crawl ผ่าน link equity */
+function isStaleDate(date: string): boolean {
+  const then = new Date(`${date}T12:00:00`)
+  const now = new Date(`${todayBangkok()}T12:00:00`)
+  const diffMs = now.getTime() - then.getTime()
+  return diffMs > 365 * 24 * 60 * 60 * 1000
+}
+
 function datePath(date: string) {
   return `/lottery/${date}`
 }
@@ -109,7 +117,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     openGraph: baseOpenGraph(path, title, description),
     twitter: baseTwitter(title, description),
-    robots: { index: true, follow: true },
+    robots: isStaleDate(date)
+      ? { index: false, follow: true }   // เก่าเกิน 365 วัน → noindex แต่ยังส่ง link equity
+      : { index: true, follow: true },
   }
 }
 

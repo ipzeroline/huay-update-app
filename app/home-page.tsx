@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import LotteryApp from './lottery-client'
 import LotterySeoContent, { faqJsonLd } from './lottery-seo-content'
 import { fetchLotteryByDate, todayBangkok, type LotteryByDateResponse } from '@/lib/lottery-api'
+import { getLatestArticles } from '@/lib/blog-articles'
 import { DICT, LANG_LOCALE, type Lang } from '@/lib/i18n'
 import {
   absoluteUrl,
@@ -32,6 +34,42 @@ export function homeMetadata(lang: Lang, canonical = '/'): Metadata {
     twitter: baseTwitter(title, description),
     robots: { index: true, follow: true },
   }
+}
+
+function BlogLatestSection({ lang }: { lang: Lang }) {
+  const articles = getLatestArticles(8)
+  if (lang !== 'th' || articles.length === 0) return null
+
+  return (
+    <section className="blog-home-section">
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 12, marginBottom: 14,
+      }}>
+        <h2 className="blog-home-heading">📝 บทความล่าสุด</h2>
+        <Link href={`/${lang}/blog`} className="blog-home-all-link">
+          ดูทั้งหมด →
+        </Link>
+      </div>
+      <div className="blog-home-grid">
+        {articles.map(article => (
+          <Link
+            key={article.slug}
+            href={`/${lang}/blog/${article.slug}`}
+            className="blog-home-card"
+          >
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+            <time dateTime={article.date}>
+              {new Date(article.date).toLocaleDateString('th-TH', {
+                day: 'numeric', month: 'long', year: 'numeric',
+              })}
+            </time>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
 }
 
 export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; canonical?: string }) {
@@ -128,6 +166,7 @@ export default async function HomePage({ lang, canonical = '/' }: { lang: Lang; 
         langPrefix={`/${lang}`}
       />
       <LotterySeoContent currentDate={date} lang={lang} markets={allMarkets} />
+      <BlogLatestSection lang={lang} />
     </>
   )
 }

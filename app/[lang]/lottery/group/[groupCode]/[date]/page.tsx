@@ -37,6 +37,14 @@ function isFutureDate(date: string): boolean {
   return date > todayBangkok()
 }
 
+/** หน้าที่ย้อนหลังเกิน 365 วัน → noindex แต่ยังให้ crawl ผ่าน link equity */
+function isStaleDate(date: string): boolean {
+  const then = new Date(`${date}T12:00:00`)
+  const now = new Date(`${todayBangkok()}T12:00:00`)
+  const diffMs = now.getTime() - then.getTime()
+  return diffMs > 365 * 24 * 60 * 60 * 1000
+}
+
 function drawDateTitle(title: string, date: string, lang: Lang) {
   if (lang === 'en') return `${title} for ${formatSeoDate(date, lang)}`
   if (lang === 'la') return `${title} ງວດວັນທີ ${formatSeoDate(date, lang)}`
@@ -70,7 +78,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: { canonical: path, languages: languageAlternates(groupDatePath(groupCode, date)) },
     openGraph: baseOpenGraph(path, title, description),
     twitter: baseTwitter(title, description),
-    robots: { index: true, follow: true },
+    robots: isStaleDate(date)
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
   }
 }
 

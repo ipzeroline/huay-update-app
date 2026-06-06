@@ -29,7 +29,12 @@ const footerCopy: Record<Lang, {
     email: 'อีเมล',
     policyLinks: [
       { href: '/th', label: 'หน้าแรก' },
+      { href: '/th/about', label: 'เกี่ยวกับเรา' },
+      { href: '/th/policy', label: 'นโยบาย' },
       { href: '/th/lottery-formula', label: 'สูตรคำนวณหวย' },
+      { href: '/th/blog', label: 'บทความ' },
+      { href: '/th/blog/แหล่งข้อมูลผลหวย-ความน่าเชื่อถือ', label: 'แหล่งข้อมูล' },
+      { href: '/th/blog/เล่นหวยอย่างมีสติ', label: 'เล่นอย่างมีสติ' },
       { href: '/sitemap.xml', label: 'Sitemap' },
     ],
     groupLabels: {
@@ -49,7 +54,12 @@ const footerCopy: Record<Lang, {
     email: 'Email',
     policyLinks: [
       { href: '/en', label: 'Home' },
+      { href: '/en/about', label: 'About Us' },
+      { href: '/en/policy', label: 'Policy' },
       { href: '/en/lottery-formula', label: 'Lottery Formula' },
+      { href: '/en/blog', label: 'Blog' },
+      { href: '/en/blog/our-data-sources', label: 'Data Sources' },
+      { href: '/en/blog/responsible-play', label: 'Responsible Play' },
       { href: '/sitemap.xml', label: 'Sitemap' },
     ],
     groupLabels: {
@@ -69,7 +79,12 @@ const footerCopy: Record<Lang, {
     email: 'ອີເມວ',
     policyLinks: [
       { href: '/la', label: 'ໜ້າຫຼັກ' },
+      { href: '/la/about', label: 'ກ່ຽວກັບເຮົາ' },
+      { href: '/la/policy', label: 'ນະໂຍບາຍ' },
       { href: '/la/lottery-formula', label: 'ສູດຄຳນວນຫວຍ' },
+      { href: '/la/blog', label: 'ບົດຄວາມ' },
+      { href: '/la/blog/our-data-sources', label: 'ແຫຼ່ງຂໍ້ມູນ' },
+      { href: '/la/blog/responsible-play', label: 'ຫຼິ້ນຢ່າງມີສະຕິ' },
       { href: '/sitemap.xml', label: 'Sitemap' },
     ],
     groupLabels: {
@@ -89,7 +104,12 @@ const footerCopy: Record<Lang, {
     email: 'អ៊ីមែល',
     policyLinks: [
       { href: '/kh', label: 'ទំព័រដើម' },
+      { href: '/kh/about', label: 'អំពីយើង' },
+      { href: '/kh/policy', label: 'គោលការណ៍' },
       { href: '/kh/lottery-formula', label: 'រូបមន្តគណនាឆ្នោត' },
+      { href: '/kh/blog', label: 'អត្ថបទ' },
+      { href: '/kh/blog/our-data-sources', label: 'ប្រភពទិន្នន័យ' },
+      { href: '/kh/blog/responsible-play', label: 'លេងដោយមានស្មារតី' },
       { href: '/sitemap.xml', label: 'Sitemap' },
     ],
     groupLabels: {
@@ -109,7 +129,12 @@ const footerCopy: Record<Lang, {
     email: '电子邮件',
     policyLinks: [
       { href: '/zh', label: '首页' },
+      { href: '/zh/about', label: '关于我们' },
+      { href: '/zh/policy', label: '政策' },
       { href: '/zh/lottery-formula', label: '彩票公式' },
+      { href: '/zh/blog', label: '博客' },
+      { href: '/zh/blog/our-data-sources', label: '数据来源' },
+      { href: '/zh/blog/responsible-play', label: '负责任娱乐' },
       { href: '/sitemap.xml', label: 'Sitemap' },
     ],
     groupLabels: {
