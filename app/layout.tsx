@@ -126,6 +126,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', '${GOOGLE_ANALYTICS_ID}');
           `}
         </Script>
+        {/* Monetag In-Page Push */}
+        <Script id="monetag-inpage-push" strategy="afterInteractive">
+          {`(function(s){s.dataset.zone='11109841',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`}
+        </Script>
       </body>
     </html>
   )
