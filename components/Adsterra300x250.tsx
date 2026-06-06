@@ -2,7 +2,9 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-const ADSTERRA_KEY = "4762b80962e79e7ee30f319a06203598";
+// Desktop 728x90 / Mobile 320x50 — แยก key คนละชุด
+const ADSTERRA_DESKTOP_KEY = "5e7a4e33456092c055144b6270c27bff"; // 728x90
+const ADSTERRA_MOBILE_KEY = "4762b80962e79e7ee30f319a06203598"; // 320x50
 const DESKTOP_BREAKPOINT = 900;
 const DESKTOP_WIDTH = 728;
 const DESKTOP_HEIGHT = 90;
@@ -85,20 +87,21 @@ export default function Adsterra300x250() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // โหลด ad script
+  // โหลด ad script — แยก key desktop/mobile
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     container.innerHTML = "";
 
+    const key = isDesktop ? ADSTERRA_DESKTOP_KEY : ADSTERRA_MOBILE_KEY;
     const width = isDesktop ? DESKTOP_WIDTH : MOBILE_WIDTH;
     const height = isDesktop ? DESKTOP_HEIGHT : MOBILE_HEIGHT;
 
     const optionsScript = document.createElement("script");
     optionsScript.innerHTML = `
       atOptions = {
-        'key' : '${ADSTERRA_KEY}',
+        'key' : '${key}',
         'format' : 'iframe',
         'height' : ${height},
         'width' : ${width},
@@ -107,7 +110,7 @@ export default function Adsterra300x250() {
     `;
 
     const invokeScript = document.createElement("script");
-    invokeScript.src = `https://www.highperformanceformat.com/${ADSTERRA_KEY}/invoke.js`;
+    invokeScript.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
     invokeScript.async = true;
 
     container.appendChild(optionsScript);
