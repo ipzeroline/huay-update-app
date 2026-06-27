@@ -65,8 +65,10 @@ export default function MarketViewCounter({
             window.localStorage.removeItem(storageKey)
           }
         })
-        .catch(() => {
-          window.localStorage.removeItem(storageKey)
+        .catch(error => {
+          if ((error as Error).name !== 'AbortError') {
+            window.localStorage.removeItem(storageKey)
+          }
         })
     }
 

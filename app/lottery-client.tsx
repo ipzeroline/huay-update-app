@@ -362,15 +362,38 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
   }, [])
 
   useEffect(() => {
+    let timeout: number | undefined
     const tick = () => {
       const now = toLocalDateStr(new Date())
       setToday(prev => (prev === now ? prev : now))
     }
-    const id = setInterval(tick, 30_000)
-    const onVisible = () => { if (document.visibilityState === 'visible') tick() }
+    const clearScheduledTick = () => {
+      if (timeout !== undefined) window.clearTimeout(timeout)
+      timeout = undefined
+    }
+    const scheduleNextDayTick = () => {
+      clearScheduledTick()
+      if (document.visibilityState !== 'visible') return
+      const nextMidnight = new Date()
+      nextMidnight.setHours(24, 0, 5, 0)
+      timeout = window.setTimeout(() => {
+        tick()
+        scheduleNextDayTick()
+      }, Math.max(1000, nextMidnight.getTime() - Date.now()))
+    }
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        tick()
+        scheduleNextDayTick()
+      } else {
+        clearScheduledTick()
+      }
+    }
+    tick()
+    scheduleNextDayTick()
     document.addEventListener('visibilitychange', onVisible)
     return () => {
-      clearInterval(id)
+      clearScheduledTick()
       document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
@@ -390,9 +413,10 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
   const fetchData = useCallback(async (d: string, l: Lang) => {
     abortRef.current?.abort()
     const ctrl = new AbortController(); abortRef.current = ctrl
+    const timeout = window.setTimeout(() => ctrl.abort(), 10_000)
     setLoading(true)
     try {
-      const res = await fetch(`/api/lottery?date=${d}&lang=${l}`, { signal: ctrl.signal, cache: 'no-store' })
+      const res = await fetch(`/api/lottery?date=${d}&lang=${l}`, { signal: ctrl.signal })
       const json: ApiResponse = await res.json()
       if (abortRef.current === ctrl) {
         setData(groupCode && json.data ? {
@@ -408,6 +432,7 @@ export default function LotteryApp({ initialData, initialDate, initialLang, grou
         setData({ success: false, error: t.loadFail })
       }
     } finally {
+      window.clearTimeout(timeout)
       if (abortRef.current === ctrl) {
         abortRef.current = null
         setLoading(false)

@@ -78,6 +78,9 @@ export function MarketHistoryBlock({
     setError(null)
     if (canonicalPath) window.history.replaceState(null, '', canonicalPath)
 
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 10_000)
+
     try {
       const params = new URLSearchParams({
         lang,
@@ -85,7 +88,7 @@ export function MarketHistoryBlock({
         limit: String(pageSize),
       })
       const response = await fetch(`/api/market/${encodeURIComponent(marketId)}?${params.toString()}`, {
-        cache: 'no-store',
+        signal: controller.signal,
       })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
@@ -101,6 +104,7 @@ export function MarketHistoryBlock({
     } catch {
       setError(t.loadFail)
     } finally {
+      window.clearTimeout(timeout)
       setLoadingPage(null)
     }
   }

@@ -61,7 +61,9 @@ const HIDDEN_LOTTERY_GROUP_ID = 5
 const HIDDEN_LOTTERY_GROUP_NAME = 'หวยยี่กี'
 export const MARKET_RESULTS_PAGE_SIZE = 30
 const UPSTREAM_MARKET_RESULTS_PAGE_SIZE = 3
-const DEFAULT_REVALIDATE_SECONDS = 60
+export const DEFAULT_REVALIDATE_SECONDS = 60
+export const MARKET_RESULTS_REVALIDATE_SECONDS = 300
+const UPSTREAM_FETCH_TIMEOUT_MS = 10_000
 
 type FetchCacheOptions = {
   cache?: RequestCache
@@ -84,6 +86,22 @@ function apiFetchOptions(lang: string, options: FetchCacheOptions = {}): Request
   }
 
   return requestOptions
+}
+
+async function fetchJson<T>(url: string | URL, lang: string, options: FetchCacheOptions = {}): Promise<T> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), UPSTREAM_FETCH_TIMEOUT_MS)
+
+  try {
+    const res = await fetch(url, {
+      ...apiFetchOptions(lang, options),
+      signal: controller.signal,
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return res.json() as Promise<T>
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 function normalizedGroupName(name: string | null | undefined): string {
@@ -149,9 +167,7 @@ export async function fetchLotteryByDate(
   options: FetchCacheOptions = {},
 ): Promise<LotteryByDateResponse> {
   const url = `https://api.1168lot.com/api/v1/lotto/results/by-date?date=${encodeURIComponent(date)}`
-  const res = await fetch(url, apiFetchOptions(lang, options))
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const payload: LotteryByDateResponse = await res.json()
+  const payload = await fetchJson<LotteryByDateResponse>(url, lang, options)
   return hideHiddenLotteryGroups(payload)
 }
 
@@ -226,7 +242,5 @@ async function fetchMarketResultsPage(
   const url = new URL(`https://api.1168lot.com/api/v1/lotto/markets/${encodeURIComponent(id)}/results`)
   url.searchParams.set('page', String(page))
   url.searchParams.set('limit', String(limit))
-  const res = await fetch(url, apiFetchOptions(lang, options))
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  return res.json()
+  return fetchJson<MarketDetailResponse>(url, lang, options)
 }
